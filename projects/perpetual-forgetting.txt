@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <meta name="description" content="Perpetual Forgetting (2023) - A generative text work by Yusuf Özcan exploring Maurice Blanchot's concepts through Markov chains and algorithmic text generation.">
+        <meta name="keywords" content="Yusuf Özcan, Perpetual Forgetting, Markov chain, generative text, Maurice Blanchot, algorithmic art, digital literature">
+        <meta name="author" content="Yusuf Özcan">
+    
+        <meta property="og:title" content="Perpetual Forgetting (2023) | Yusuf Özcan">
+        <meta property="og:description" content="A generative text work exploring Maurice Blanchot's concepts through Markov chains and algorithmic text generation.">
+        <meta property="og:image" content="https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg">
+        <meta property="og:url" content="https://yusufozcan.info/projects/perpetual-forgetting.html">
+        <meta property="og:type" content="website">
+    
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Perpetual Forgetting (2023) | Yusuf Özcan">
+        <meta name="twitter:description" content="A generative text work exploring Maurice Blanchot's concepts through Markov chains and algorithmic text generation.">
+        <meta name="twitter:image" content="https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg">
+    
+        <title>Perpetual Forgetting (2023) | Yusuf Özcan</title>
+        <link rel="canonical" href="https://yusufozcan.info/projects/perpetual-forgetting.html">
+    
+        <link rel="stylesheet" href="../assets/css/main.css">
+        <link rel="stylesheet" href="../assets/css/project.css">
+    
+        <link rel="icon" type="image/svg" href="../assets/icons/fav_icon.svg">
+    
+    </head>
+    <body>
+        <header>
+            <nav id="navbar">
+                <div class="logo">
+                    <a href="../index.html">
+                        <img src="../assets/icons/logo.png" alt="Yusuf Özcan - Multimedia Artist Logo">
+                    </a>
+                </div>
+                <button id="hamburger" class="hamburger" aria-label="Toggle navigation">☰</button>
+                <ul class="nav-links">
+                    <li><a href="../index.html" data-translate="home">Home</a></li>
+                    <li><a href="../about.html" data-translate="about">About</a></li>
+                    <li><a href="../works.html" data-translate="work">Work</a></li>
+                    <li><a href="#" data-translate="blog">Blog</a></li> <li><a href="../contact.html" data-translate="contact">Contact</a></li>
+                </ul>
+                <div class="language-switcher">
+                    <button onclick="changeLanguage('en')">EN</button>
+                    <button onclick="changeLanguage('tr')">TR</button>
+                    <button id="globalThemeToggle" class="theme-toggle-button" aria-label="Toggle theme">
+                        ☀️
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="project-container">
+            <article class="project-content">
+                <h1 class="project-title" data-translate="forgetting.title">Perpetual Forgetting, 2023</h1>
+
+                <div class="text-generator">
+                    <h3>Experience the Text Generator</h3>
+
+                    <form id="generatorForm" class="generator-form">
+                        <div class="form-group">
+                            <label for="file">Upload Text File (UTF-8 encoded):</label>
+                            <input type="file" id="file" name="file" accept=".txt">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customText">Or write/paste your own text:</label>
+                            <textarea id="customText" name="customText" placeholder="Enter your text here..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sentences">Number of Sentences:</label>
+                            <input type="number" id="sentences" name="sentences" value="100" min="1" max="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="order">Markov Chain Order (1-3):</label>
+                            <input type="number" id="order" name="order" value="2" min="1" max="3">
+                            <small>Lower values (1-2) produce more novel but less coherent text.</small>
+                        </div>
+
+                        <button type="submit" class="generator-button">Generate Text</button>
+                    </form>
+
+                    <div id="loadingIndicator" class="loading-indicator">
+                        Generating text... This may take a moment.
+                    </div>
+
+                    <div id="generatorResult" class="generator-result"></div>
+
+                    <button id="debugToggle">Show/Hide Debug Info</button>
+                    <div id="debugInfo" class="debug-info"></div>
+
+                    <p class="generator-note">
+                        <em>Note: You can 1) download "Bekleyiş Unutuş" (Waiting and Forgetting) by Maurice Blanchot from
+                        <a href="../assets/texts/bekleyis_unutus.txt" download>here</a>, 2) upload your own text file, or 3) write/paste text directly in the text editor above.</em>
+                    </p>
+                </div>
+                <div class="project-description">
+                    <p data-translate="forgetting.description">In Claude Shannon's 1948 article "A Mathematical Theory of Communication," it is argued that the randomness connected through the Markov chain can be applied to letters and then to words, and that in this way, a sliced text can be created that shares the same statistical structure as a real text.</p>
+
+                    <p>Maurice Blanchot, whose style and the differences of his texts I liken to the differences of expression in my own work, has a story called "Waiting and Forgetting," which I always enjoy reading. This is a text that can be said to be completely detached from the plot. This is one of the reasons why I enjoy reading it all the time. Because it also contains a kind of constant forgetting.</p>
+
+                    <p>Derrida, in an interview for "Waiting and Forgetting," states: "'Awaiting Oblivion' is perhaps the last book with a form of fiction, the event of the conceivable that gives birth to the narrative, a tale that emerges as an event, neither true nor false, and in which the sense of fiction... begins to tremble." Emphasizes the slice-like structure of the text. Therefore, through the Markov chain, I have tried to create a text that repeats Blanchot and constantly reproduces itself.</p>
+                </div>
+
+                <div class="project-metadata">
+                    <div class="metadata-item">
+                        <h3>Year</h3>
+                        <p>2023</p>
+                    </div>
+                    <div class="metadata-item">
+                        <h3>Medium</h3>
+                        <p>Interactive digital installation, generative text</p>
+                    </div>
+                    <div class="metadata-item">
+                        <h3>Technology</h3>
+                        <p>Markov chains, HTML/CSS/JavaScript</p>
+                    </div>
+                </div>
+
+                <div class="project-navigation">
+                    <a href="terra-incognita.html" class="prev-project">
+                        <span class="nav-arrow">←</span>
+                        <span class="nav-title">Terra Incognita</span>
+                    </a>
+                    <a href="../works.html" class="all-projects">All Works</a>
+                    <a href="all-together.html" class="next-project">
+                        <span class="nav-title">All Together</span>
+                        <span class="nav-arrow">→</span>
+                    </a>
+                </div>
+            </article>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <a href="../index.html" data-translate="home">Home</a>
+                <a href="../about.html" data-translate="about">About</a>
+                <a href="../works.html" data-translate="work">Work</a>
+                <a href="#" data-translate="blog">Blog</a> <a href="../contact.html" data-translate="contact">Contact</a>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.instagram.com/yusufz.ozcan" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.behance.net/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/behance.png" alt="Behance">
+                </a>
+                <a href="https://vimeo.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/vimeo.png" alt="Vimeo">
+                </a>
+            </div>
+
+            <p data-translate="copyright">Copyright © 2024 Yusuf Özcan. All Rights Reserved.</p>
+        </footer>
+
+        <script src="../assets/js/translations.js"></script>
+        <script src="../assets/js/main.js"></script>
+        <script>
+            // --- Markov Chain Generator Class (from standalone) ---
+            class SimpleMarkovGenerator {
+                constructor(text, order = 2) {
+                    this.order = order;
+                    this.models = {};
+                    this.beginnings = [];
+                    
+                    // Debug info collection
+                    this.debug = {
+                        inputLength: text.length,
+                        sentences: 0,
+                        validSentences: 0,
+                        beginnings: 0,
+                        modelSizes: {}
+                    };
+                    
+                    // 1. Simple text cleaning
+                    text = text.replace(/\s+/g, ' ').trim();
+                    
+                    // 2. Split sentences simply by punctuation
+                    // Add a space after each punctuation mark to ensure proper splitting
+                    text = text.replace(/([.!?])/g, '$1 ');
+                    const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 0);
+                    
+                    this.debug.sentences = sentences.length;
+                    
+                    // Process each sentence
+                    sentences.forEach(sentence => {
+                        sentence = sentence.trim();
+                        if (!sentence) return;
+                        
+                        // Split into words
+                        const words = sentence.split(/\s+/).filter(w => w.length > 0);
+                        
+                        // Skip sentences that are too short for this order
+                        if (words.length < this.order) return;
+                        
+                        this.debug.validSentences++;
+                        
+                        // Always add the beginning - don't filter
+                        const beginning = words.slice(0, this.order);
+                        this.beginnings.push(beginning);
+                        this.debug.beginnings++;
+                        
+                        // Build models for all state sizes from 1 to order
+                        for (let stateSize = 1; stateSize <= this.order; stateSize++) {
+                            // Initialize the model object for this state size
+                            if (!this.models[stateSize]) {
+                                this.models[stateSize] = {};
+                                this.debug.modelSizes[stateSize] = 0;
+                            }
+                            
+                            // Create state transitions
+                            for (let i = 0; i <= words.length - stateSize; i++) {
+                                const state = words.slice(i, i + stateSize).join(' ');
+                                
+                                // Get the next word if available
+                                if (i + stateSize < words.length) {
+                                    const nextWord = words[i + stateSize];
+                                    
+                                    // Add to the model
+                                    if (!this.models[stateSize][state]) {
+                                        this.models[stateSize][state] = [];
+                                        this.debug.modelSizes[stateSize]++;
+                                    }
+                                    this.models[stateSize][state].push(nextWord);
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Add fallback if no beginnings were found
+                    if (this.beginnings.length === 0 && sentences.length > 0) {
+                        // Just add the first few words from the first sentence as a fallback
+                        const firstSentenceWords = sentences[0].split(/\s+/).filter(w => w.length > 0);
+                        if (firstSentenceWords.length >= this.order) {
+                            this.beginnings.push(firstSentenceWords.slice(0, this.order));
+                            this.debug.beginnings++;
+                        } else if (firstSentenceWords.length > 0) {
+                            // If even the first sentence is shorter than order, use what we have
+                            this.beginnings.push(firstSentenceWords);
+                            this.debug.beginnings++;
+                        }
+                    }
+                }
+                
+                getDebugInfo() {
+                    return {
+                        orderUsed: this.order,
+                        inputLength: this.debug.inputLength,
+                        sentencesFound: this.debug.sentences,
+                        validSentences: this.debug.validSentences,
+                        beginningsCollected: this.debug.beginnings,
+                        modelSizes: this.debug.modelSizes
+                    };
+                }
+                
+                generateSentence() {
+                    // Fallback if still no beginnings
+                    if (this.beginnings.length === 0) {
+                        return "Not enough data to generate text. Try a smaller order value.";
+                    }
+                    
+                    // Start with a random beginning
+                    const beginning = [...this.beginnings[Math.floor(Math.random() * this.beginnings.length)]];
+                    let result = [...beginning];
+                    
+                    // Generate the rest of the sentence
+                    const MAX_LENGTH = 30;
+                    
+                    // Start with the highest order available but not greater than what we have words for
+                    let currentStateSize = Math.min(this.order, result.length);
+                    
+                    while (result.length < MAX_LENGTH) {
+                        // Get the current state
+                        const stateWords = result.slice(-currentStateSize);
+                        const state = stateWords.join(' ');
+                        
+                        // Try to find next words for this state
+                        let nextWord = null;
+                        
+                        // Try with decreasing state sizes until we find a match
+                        let tempStateSize = currentStateSize;
+                        while (tempStateSize > 0 && !nextWord) {
+                            const tempState = result.slice(-tempStateSize).join(' ');
+                            if (this.models[tempStateSize] && 
+                                this.models[tempStateSize][tempState] && 
+                                this.models[tempStateSize][tempState].length > 0) {
+                                
+                                // Get random next word
+                                const possibleNextWords = this.models[tempStateSize][tempState];
+                                nextWord = possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+                                break;
+                            }
+                            tempStateSize--;
+                        }
+                        
+                        // If we couldn't find any continuation even with state size 1, end the sentence
+                        if (!nextWord) {
+                            break;
+                        }
+                        
+                        // Add the next word
+                        result.push(nextWord);
+                        
+                        // End the sentence if it's getting long enough
+                        if (result.length > 5 && Math.random() < 0.1) {
+                            break;
+                        }
+                    }
+                    
+                    // Ensure the sentence has proper capitalization and punctuation
+                    let sentence = result.join(' ').trim();
+                    
+                    // Capitalize first letter
+                    sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+                    
+                    // Add ending punctuation if missing
+                    if (!/[.!?]$/.test(sentence)) {
+                        sentence += '.';
+                    }
+                    
+                    return sentence;
+                }
+                
+                generateText(numSentences) {
+                    let result = "";
+                    
+                    for (let i = 0; i < numSentences; i++) {
+                        const sentence = this.generateSentence();
+                        result += sentence + " ";
+                        
+                        // Add paragraph breaks occasionally
+                        if (Math.random() < 0.36 && i < numSentences - 1) {
+                            result += "\n\n";
+                        }
+                    }
+                    
+                    return result;
+                }
+            }
+
+            // --- UI Interaction Script ---
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get references to UI elements
+                const globalThemeToggle = document.getElementById('globalThemeToggle');
+                const htmlElement = document.documentElement;
+                const generatorForm = document.getElementById('generatorForm');
+                const fileInput = document.getElementById('file');
+                const customTextInput = document.getElementById('customText');
+                const sentencesInput = document.getElementById('sentences');
+                const orderInput = document.getElementById('order');
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const resultDiv = document.getElementById('generatorResult');
+                const debugToggle = document.getElementById('debugToggle');
+                const debugInfoDiv = document.getElementById('debugInfo');
+
+                // --- Global Theme Handling ---
+                const themeLocalStorageKey = 'page-theme';
+                const lightIcon = '☀️';
+                const darkIcon = '🌙';
+
+                // Function to apply theme based on 'light' or 'dark' string
+                const applyTheme = (theme) => {
+                    htmlElement.setAttribute('data-theme', theme);
+                    globalThemeToggle.textContent = theme === 'dark' ? lightIcon : darkIcon;
+                    localStorage.setItem(themeLocalStorageKey, theme);
+                };
+
+                // Apply saved theme on load or default to light
+                const savedTheme = localStorage.getItem(themeLocalStorageKey);
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+                // Global Theme toggle event listener
+                globalThemeToggle.addEventListener('click', function() {
+                    const currentTheme = htmlElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    applyTheme(newTheme);
+                });
+
+                // --- Debug Info Toggle ---
+                debugToggle.addEventListener('click', function() {
+                    const isHidden = debugInfoDiv.style.display === 'none' || debugInfoDiv.style.display === '';
+                    debugInfoDiv.style.display = isHidden ? 'block' : 'none';
+                    debugToggle.textContent = isHidden ? 'Hide Debug Info' : 'Show Debug Info';
+                });
+
+                // --- Form Submission Handler ---
+                generatorForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Get user inputs
+                    const numSentences = parseInt(sentencesInput.value, 10) || 100;
+                    const chainOrder = parseInt(orderInput.value, 10) || 2;
+                    const customText = customTextInput.value.trim();
+                    const file = fileInput.files && fileInput.files.length > 0 ? fileInput.files[0] : null;
+
+                    // Show loading, hide previous results/errors
+                    loadingIndicator.style.display = 'block';
+                    resultDiv.style.display = 'none';
+                    resultDiv.textContent = '';
+                    debugInfoDiv.textContent = '';
+                    debugInfoDiv.style.display = 'none';
+                    debugToggle.textContent = 'Show Debug Info';
+
+                    // Function to process the text and generate output
+                    const processAndGenerate = (text) => {
+                        setTimeout(() => {
+                            try {
+                                if (!text || text.trim().length < 20) {
+                                    throw new Error('Please provide more text (at least 20 characters) via file upload or the text area.');
+                                }
+
+                                // Instantiate the generator
+                                const generator = new SimpleMarkovGenerator(text, chainOrder);
+
+                                // Generate the text
+                                const generatedText = generator.generateText(numSentences);
+
+                                // Get and display debug info
+                                const debugInfo = generator.getDebugInfo();
+                                let debugText = `Input text: ${debugInfo.inputLength} characters\n`;
+                                debugText += `Sentences found: ${debugInfo.sentencesFound}\n`;
+                                debugText += `Valid sentences: ${debugInfo.validSentences}\n`;
+                                debugText += `Beginnings collected: ${debugInfo.beginningsCollected}\n`;
+                                debugText += `Model sizes: `;
+                                
+                                for (const [order, size] of Object.entries(debugInfo.modelSizes)) {
+                                    debugText += `Order ${order}: ${size} states, `;
+                                }
+                                
+                                debugInfoDiv.innerHTML = debugText;
+
+                                // Display the result
+                                resultDiv.textContent = generatedText;
+                                resultDiv.style.display = 'block';
+
+                            } catch (error) {
+                                console.error("Error during generation:", error);
+                                resultDiv.textContent = `Error: ${error.message}`;
+                                resultDiv.style.display = 'block';
+                                debugInfoDiv.textContent = `Error occurred: ${error.message}\n${error.stack || ''}`;
+                            } finally {
+                                loadingIndicator.style.display = 'none';
+                            }
+                        }, 10);
+                    };
+
+                    // --- Determine Text Source ---
+                    if (customText.length > 0) {
+                        console.log("Using text from text area.");
+                        processAndGenerate(customText);
+                    } else if (file) {
+                        console.log("Using uploaded file:", file.name);
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            processAndGenerate(event.target.result);
+                        };
+                        reader.onerror = function(event) {
+                            console.error("File reading error:", event);
+                            resultDiv.textContent = 'Error reading the uploaded file. Please ensure it is a valid UTF-8 text file.';
+                            resultDiv.style.display = 'block';
+                            loadingIndicator.style.display = 'none';
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        // Try both path options for the default text
+                        const defaultTextPath = '../assets/texts/bekleyis_unutus.txt';
+                        const fallbackPath = 'assets/texts/bekleyis_unutus.txt';
+                        
+                        console.log("No custom text or file provided. Fetching default text:", defaultTextPath);
+                        
+                        fetch(defaultTextPath)
+                            .then(response => {
+                                if (!response.ok) {
+                                    console.log("First path failed, trying fallback:", fallbackPath);
+                                    return fetch(fallbackPath);
+                                }
+                                return response;
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status} - Could not load default text file.`);
+                                }
+                                return response.text();
+                            })
+                            .then(text => {
+                                processAndGenerate(text);
+                            })
+                            .catch(error => {
+                                console.error("Error fetching default text:", error);
+                                // Provide a fallback sample text
+                                const sampleText = "Bekleyiş, bekleyişi, en için ve en dışın kesiştiği dairelerde kendi üstüne dolanmış, sıkışmış, yansız bir edim haline getiren şeye dikkat kesilmek, bekleyiş halindeki ve ta beklenmedik olana kadar geri döndürülebilecek olan dağınık bir dikkat. Bekleyiş, herhangi bir şey beklemeyi reddeden bekleyiş, adımların kıvrımlarını açarak gözler önüne serdiği sakin uzam. Adam, aşırı dikkat gerektiren edirolerde gizlenmiş ve dağılmış bir şekilde erişiirneye müsait temel bir dikkatsizliğin hizmetinde olduğu hissine kapılıyordu. Bekleyen, fakat bekleyişe müsaade etmeyecek olana bağımlı halde bekleyen bir bekleyiş.";
+                                console.log("Using sample text fallback");
+                                processAndGenerate(sampleText);
+                            });
+                    }
+                });
+            });
+        </script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VisualArtwork",
+            "name": "Perpetual Forgetting",
+            "creator": {
+                "@type": "Person",
+                "name": "Yusuf Özcan",
+                "sameAs": "https://www.instagram.com/yusufz.ozcan"
+            },
+            "dateCreated": "2023",
+            "artform": "Digital installation, generative text",
+            "description": "A generative text work exploring Maurice Blanchot's concepts through Markov chains and algorithmic text generation.",
+            "image": "https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg", // Ensure this path is correct
+            "genre": ["Digital Art", "Algorithm Art", "Conceptual Art", "Interactive Art"] // More specific genres
+        }
+        </script>
+    </body>
+</html>

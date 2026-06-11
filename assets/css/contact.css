@@ -1,0 +1,124 @@
+/* contact.css - Minimalist contact page styles matching your current design */
+
+.contact-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+}
+
+.contact-section h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.8rem;
+    font-weight: normal;
+}
+
+.contact-info {
+    margin-bottom: 3rem;
+}
+
+.contact-item {
+    margin-bottom: 2rem;
+}
+
+.contact-item h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: normal;
+}
+
+.contact-item p {
+    margin: 0;
+}
+
+.contact-item a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.contact-item a:hover {
+    text-decoration: underline;
+}
+
+.social-media-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.social-media-links a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Contact Form */
+.contact-form h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: normal;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--input-border, #ccc);
+    background-color: var(--input-bg, #fff);
+    color: var(--text-color, #333);
+    font-family: inherit;
+    font-size: inherit;
+    transition: background-color var(--transition-speed), 
+                color var(--transition-speed), 
+                border-color var(--transition-speed);
+}
+
+.form-group textarea {
+    height: 8rem;
+    resize: vertical;
+}
+
+.submit-btn {
+    background: none;
+    border: 1px solid var(--accent-color, #333);
+    color: var(--accent-color, #333);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    transition: background-color var(--transition-speed), 
+                color var(--transition-speed), 
+                border-color var(--transition-speed);
+}
+
+.submit-btn:hover {
+    background-color: var(--accent-color, #333);
+    color: var(--background-color, white);
+}
+
+/* Dark theme specific overrides */
+[data-theme="dark"] .submit-btn {
+    border-color: var(--accent-color, #888);
+    color: var(--accent-color, #888);
+}
+
+[data-theme="dark"] .submit-btn:hover {
+    background-color: var(--accent-color, #888);
+    color: var(--background-color, #1a1a1a);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 4rem 1rem;
+    }
+}

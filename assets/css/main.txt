@@ -1,0 +1,374 @@
+/* main.css - Core styles for Yusuf Özcan's portfolio */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@300&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@200;400;600&display=swap');
+
+/* --- Global Theme Variables (Light - Default) --- */
+:root {
+    --background-color: #f5f5f5;
+    --text-color: #333;
+    --accent-color: #4a4a4a;
+    --hover-color: #666;
+    --footer-color: #333;
+    --card-bg: #fff;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-color-light: #ddd;
+    --border-color-dark: #444;
+    --input-bg-light: #fff;
+    --input-bg-dark: #1a1a1a;
+    --input-text-light: #333;
+    --input-text-dark: #eee;
+    --link-color-light: #007bff;
+    --link-color-dark: #6bbdff;
+    --code-bg-light: #f0f0f0;
+    --code-bg-dark: #252525;
+    --code-border-light: #e0e0e0;
+    --code-border-dark: #3a3a3a;
+    --transition-speed: 0.3s;
+}
+
+/* --- Global Dark Theme Variables --- */
+[data-theme="dark"] {
+    --background-color: #1a1a1a;
+    --text-color: #eee;
+    --accent-color: #888; /* Lighter accent for dark */
+    --hover-color: #aaa;
+    --footer-color: #222;
+    --card-bg: #2d2d2d;
+    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- Apply Global Theme Variables --- */
+body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Header & Navigation */
+header {
+    background-color: var(--background-color); /* Ensure header follows theme */
+    padding: 1em 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Keep shadow consistent or adjust for dark */
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+[data-theme="dark"] header {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* Darker shadow */
+}
+
+
+#navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    height: 20px;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Optional: Add filter for dark mode if logo contrast is poor */
+    transition: filter var(--transition-speed);
+}
+[data-theme="dark"] .logo img {
+    /* filter: invert(1) hue-rotate(180deg); */ /* Example filter */
+}
+
+
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+.nav-links li {
+    margin-left: 2rem;
+}
+
+#navbar .nav-links a { /* Increased specificity */
+    text-decoration: none;
+    color: var(--text-color);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    transition: color var(--transition-speed) ease;
+    position: relative;
+}
+
+#navbar .nav-links a:hover,
+#navbar .nav-links a.active {
+    color: var(--hover-color);
+}
+
+#navbar .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--accent-color);
+    transition: background-color var(--transition-speed);
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color); /* Ensure hamburger uses theme color */
+    transition: color var(--transition-speed);
+}
+
+.language-switcher {
+    display: flex;
+    align-items: center;
+}
+
+#navbar .language-switcher button { /* Increased specificity */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-left: 1rem;
+    transition: color var(--transition-speed) ease;
+}
+
+#navbar .language-switcher button:hover {
+    color: var(--hover-color);
+}
+
+/* --- Global Theme Toggle Button Style --- */
+.theme-toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem; /* Adjust size as needed */
+    margin-left: 1rem;
+    padding: 5px;
+    line-height: 1; /* Prevents extra space */
+    color: var(--text-color); /* Use theme color */
+    transition: color var(--transition-speed);
+}
+.theme-toggle-button:hover {
+     color: var(--hover-color);
+}
+
+
+/* Main Content */
+main {
+    padding-top: 80px; /* Account for fixed header */
+    min-height: calc(100vh - 120px); /* Full viewport minus header and footer */
+}
+
+section {
+    padding: 4rem 0;
+}
+
+section h1 {
+    font-family: 'Fira Sans Condensed', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-color); /* Use theme color */
+    transition: color var(--transition-speed);
+}
+
+section h2 {
+    font-family: 'Fira Sans Condensed', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color); /* Use theme color */
+    transition: color var(--transition-speed);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-color);
+    color: #eee; /* Usually keep footer text light */
+    padding: 2rem 0;
+    transition: background-color var(--transition-speed);
+}
+[data-theme="dark"] footer {
+     color: #ccc; /* Slightly adjust if needed */
+}
+
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links a {
+    color: #eee; /* Keep light */
+    text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: opacity var(--transition-speed) ease;
+}
+[data-theme="dark"] .footer-links a {
+    color: #ccc;
+}
+
+.footer-links a:hover {
+    opacity: 0.8;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform var(--transition-speed) ease, background-color var(--transition-speed) ease;
+    border: none;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+    background-color: #f0f0f0;
+}
+
+.social-icons img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--accent-color);
+    color: var(--background-color); /* Contrast color */
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--hover-color);
+}
+
+/* Links */
+a {
+    color: var(--link-color-light); /* Use theme variable */
+    transition: color var(--transition-speed) ease;
+    text-decoration: none; /* Optional: Remove default underline */
+}
+[data-theme="dark"] a {
+    color: var(--link-color-dark);
+}
+
+a:hover {
+    color: var(--hover-color);
+    text-decoration: underline; /* Add underline on hover */
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        position: absolute;
+        right: 1rem;
+        z-index: 1001;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--background-color);
+        padding: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-top: 1px solid var(--border-color-light); /* Add border */
+    }
+    [data-theme="dark"] .nav-links {
+        border-top-color: var(--border-color-dark);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 0.5rem 0;
+    }
+
+    .language-switcher {
+        position: absolute;
+        right: 4rem; /* Adjust if needed to accommodate theme toggle */
+    }
+
+    section h1 {
+        font-size: 2rem;
+    }
+
+    section h2 {
+        font-size: 1.5rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+

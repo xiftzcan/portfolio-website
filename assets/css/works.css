@@ -1,0 +1,172 @@
+/* works.css - Works gallery page styles for Yusuf Özcan's portfolio */
+
+#works {
+    padding: 6rem 2rem;
+}
+
+#works h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* Filter Buttons */
+.filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.filter-btn {
+    background: none;
+    border: 2px solid var(--accent-color);
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Works Gallery */
+.gallery {
+    display: grid;
+    /* Modified to ensure a maximum of 4 columns by using repeat(auto-fill) with a minimum width
+       and a maximum of 4 using minmax and 1fr */
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    max-width: 1400px; /* This helps control maximum width for 4 columns */
+    margin: 2rem auto 0;
+    gap: 2rem;
+}
+
+/* Set a maximum width for columns to prevent them from getting too large */
+@media (min-width: 1200px) {
+    .gallery {
+        grid-template-columns: repeat(4, 1fr); /* Force exactly 4 columns on large screens */
+    }
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    background-color: var(--card-bg);
+}
+
+.gallery-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-item a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.gallery-item img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.item-info {
+    padding: 1.2rem;
+}
+
+.item-info h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+    font-family: 'Fira Sans Condensed', sans-serif;
+}
+
+.item-info .year {
+    font-size: 0.9rem;
+    color: #666;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Animation for items when filtering */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.gallery-item {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Staggered animation for items - updated for 12 items */
+.gallery-item:nth-child(1) { animation-delay: 0.05s; }
+.gallery-item:nth-child(2) { animation-delay: 0.1s; }
+.gallery-item:nth-child(3) { animation-delay: 0.15s; }
+.gallery-item:nth-child(4) { animation-delay: 0.2s; }
+.gallery-item:nth-child(5) { animation-delay: 0.25s; }
+.gallery-item:nth-child(6) { animation-delay: 0.3s; }
+.gallery-item:nth-child(7) { animation-delay: 0.35s; }
+.gallery-item:nth-child(8) { animation-delay: 0.4s; }
+.gallery-item:nth-child(9) { animation-delay: 0.45s; }
+.gallery-item:nth-child(10) { animation-delay: 0.5s; }
+.gallery-item:nth-child(11) { animation-delay: 0.55s; }
+.gallery-item:nth-child(12) { animation-delay: 0.6s; }
+
+/* Pagination styles for works.html */
+.works-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.works-pagination a, 
+.works-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    color: var(--text-color);
+    padding: 0 10px;
+}
+
+.works-pagination a:hover {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+}
+
+.works-pagination .current-page {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+}
+
+.works-pagination .prev-page, 
+.works-pagination .next-page {
+    font-weight: 500;
+}
+
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    opacity: 0.7;
+}

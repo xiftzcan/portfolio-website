@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <meta name="title" content="Turkish Constitution Lemmatizer (2025) - Linguistic Web Installation">
+    <meta name="description" content="An interactive linguistic art project and lemmatization browser parsing the Turkish Constitution, mapping and connecting words to their semantic roots client-side.">
+    <meta name="keywords" content="linguistic art, Turkish Constitution, Zeyrek lemmatization, computational linguistics, interactive web installation, Turkish NLP, semantic mapping">
+    <meta name="author" content="Yusuf Özcan">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="artwork">
+    <meta property="og:title" content="Turkish Constitution Lemmatizer (2025)">
+    <meta property="og:description" content="Interactive linguistic installation mapping the Turkish Constitution to its semantic lemmas, exploring legal language networks.">
+    <meta property="og:image" content="https://yusufozcan.info/assets/detail-pics/project-1-morphing_skulls-03.jpg">
+    <meta property="og:url" content="https://yusufozcan.info/projects/anayasa-lemmatizer.html">
+
+    <title>Turkish Constitution Lemmatizer (2025) | Yusuf Özcan</title>
+    <link rel="canonical" href="https://yusufozcan.info/projects/anayasa-lemmatizer.html">
+
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/project.css">
+
+    <style>
+        /* --- Workspace Layout --- */
+        .lemmatizer-workspace {
+            display: grid;
+            grid-template-columns: 280px 1fr 340px;
+            gap: 2rem;
+            margin-top: 2rem;
+            min-height: 650px;
+            position: relative;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            gap: 1rem;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color-light);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Controls Panel */
+        .workspace-controls {
+            grid-column: span 3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: all var(--transition-speed);
+        }
+        [data-theme="dark"] .workspace-controls {
+            border-color: var(--border-color-dark);
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            flex-grow: 1;
+            max-width: 450px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 2.2rem 0.6rem 1rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: 4px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+        }
+        [data-theme="dark"] .search-input {
+            border-color: var(--border-color-dark);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.5;
+            display: none;
+        }
+        .search-clear-btn:hover {
+            opacity: 1;
+        }
+
+        /* Sidebar Navigator */
+        .navigator-panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            padding: 1.2rem;
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+        [data-theme="dark"] .navigator-panel {
+            border-color: var(--border-color-dark);
+        }
+
+        .navigator-title {
+            font-family: 'Fira Sans Condensed', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color-light);
+            color: var(--text-color);
+        }
+        [data-theme="dark"] .navigator-title {
+            border-bottom-color: var(--border-color-dark);
+        }
+
+        .tree-root {
+            list-style: none;
+        }
+
+        .tree-node {
+            margin-bottom: 0.4rem;
+        }
+
+        .node-header {
+            cursor: pointer;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+        .node-header:hover {
+            background-color: var(--background-color);
+        }
+
+        .node-header.active-node {
+            background-color: var(--background-color);
+            font-weight: 600;
+        }
+
+        .node-toggle-icon {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-right: 6px;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .node-toggle-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .node-children {
+            list-style: none;
+            padding-left: 1rem;
+            margin-top: 0.2rem;
+            display: none;
+        }
+
+        /* Styling for different node types */
+        .type-part > .node-header {
+            font-weight: 600;
+            color: var(--text-color);
+            font-family: 'Fira Sans Condensed', sans-serif;
+            border-left: 2px solid var(--accent-color);
+            border-radius: 0 4px 4px 0;
+            padding-left: 0.5rem;
+        }
+
+        .type-chapter > .node-header {
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .type-article > .node-header {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Central Sentences View */
+        .sentences-view-panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: all var(--transition-speed);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        [data-theme="dark"] .sentences-view-panel {
+            border-color: var(--border-color-dark);
+        }
+
+        .active-path-breadcrumb {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .active-title-label {
+            font-family: 'Fira Sans Condensed', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--border-color-light);
+            padding-bottom: 0.8rem;
+            color: var(--text-color);
+        }
+        [data-theme="dark"] .active-title-label {
+            border-bottom-color: var(--border-color-dark);
+        }
+
+        .sentences-canvas {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .sentences-list-wrapper {
+            position: relative;
+            z-index: 20;
+        }
+
+        .article-sentence-block {
+            margin-bottom: 1.5rem;
+            line-height: 1.9;
+            font-size: 1.25rem;
+            text-align: justify;
+            word-wrap: break-word;
+            color: var(--text-color);
+        }
+
+        /* Tokens in text */
+        .word-token {
+            cursor: pointer;
+            display: inline-block;
+            padding: 0 0.1em;
+            margin: 0 -0.1em;
+            border-radius: 3px;
+            transition: background-color 0.15s, color 0.15s;
+            position: relative;
+        }
+
+        .word-token:hover {
+            background-color: rgba(0, 0, 0, 0.06);
+            color: var(--accent-color);
+        }
+        [data-theme="dark"] .word-token:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .word-token.connected {
+            background-color: rgba(0, 123, 255, 0.08);
+            color: var(--link-color-light);
+        }
+        [data-theme="dark"] .word-token.connected {
+            background-color: rgba(107, 189, 255, 0.12);
+            color: var(--link-color-dark);
+        }
+
+        .word-token.connected.hovered-root {
+            background-color: rgba(0, 123, 255, 0.16);
+            font-weight: 500;
+        }
+        [data-theme="dark"] .word-token.connected.hovered-root {
+            background-color: rgba(107, 189, 255, 0.22);
+        }
+
+        /* Tooltip style */
+        .lemma-hover-tooltip {
+            position: fixed;
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transform: translate(-50%, -100%) translateY(-10px);
+        }
+
+        /* Lemma Inspector Pane */
+        .inspector-panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            padding: 1.2rem;
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+        [data-theme="dark"] .inspector-panel {
+            border-color: var(--border-color-dark);
+        }
+
+        .inspector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color-light);
+        }
+        [data-theme="dark"] .inspector-header {
+            border-bottom-color: var(--border-color-dark);
+        }
+
+        .inspector-header h4 {
+            font-family: 'Fira Sans Condensed', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .clear-inspector-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+        .clear-inspector-btn:hover {
+            opacity: 1;
+        }
+
+        .inspector-body {
+            flex-grow: 1;
+        }
+
+        .inspector-empty-state {
+            font-style: italic;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-color);
+        }
+
+        .inspector-lemma-summary {
+            background-color: var(--background-color);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.2rem;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .inspector-lemma-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--link-color-light);
+        }
+        [data-theme="dark"] .inspector-lemma-title {
+            color: var(--link-color-dark);
+        }
+
+        .inspector-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .inspector-result-card {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color-light);
+            border-radius: 6px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        [data-theme="dark"] .inspector-result-card {
+            border-color: var(--border-color-dark);
+        }
+        .inspector-result-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-article-title {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-color);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-text mark {
+            background-color: rgba(255, 235, 59, 0.3);
+            color: inherit;
+            padding: 0 0.1em;
+            border-radius: 2px;
+            font-weight: 500;
+        }
+        [data-theme="dark"] .card-text mark {
+            background-color: rgba(255, 235, 59, 0.2);
+        }
+
+        /* Search Results Overlay / View */
+        .search-results-panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 500px;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: all var(--transition-speed);
+        }
+        [data-theme="dark"] .search-results-panel {
+            border-color: var(--border-color-dark);
+        }
+
+        .search-results-title {
+            font-family: 'Fira Sans Condensed', sans-serif;
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-color-light);
+            padding-bottom: 0.6rem;
+        }
+        [data-theme="dark"] .search-results-title {
+            border-bottom-color: var(--border-color-dark);
+        }
+
+        .search-grid-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* --- Media Queries --- */
+        @media (max-width: 1200px) {
+            .lemmatizer-workspace {
+                grid-template-columns: 240px 1fr;
+            }
+            .inspector-panel {
+                grid-column: span 2;
+                max-height: 400px;
+            }
+            .workspace-controls {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .lemmatizer-workspace {
+                grid-template-columns: 1fr;
+            }
+            .navigator-panel, .sentences-view-panel, .inspector-panel, .workspace-controls {
+                grid-column: span 1;
+            }
+            .navigator-panel {
+                max-height: 300px;
+            }
+            .search-grid-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav id="navbar">
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../assets/icons/logo.png" alt="Yusuf Özcan - Multimedia Artist Logo" id="navbarLogo">
+                </a>
+            </div>
+            <button id="hamburger" class="hamburger" aria-label="Toggle navigation">☰</button>
+            <ul class="nav-links">
+                <li><a href="../index.html" data-translate="home">Home</a></li>
+                <li><a href="../about.html" data-translate="about">About</a></li>
+                <li><a href="../works.html" data-translate="work">Work</a></li>
+                <li><a href="../blog.html" data-translate="blog">Blog</a></li>
+                <li><a href="../contact.html" data-translate="contact">Contact</a></li>
+            </ul>
+            <div class="language-switcher">
+                <button onclick="changeLanguage('en')">EN</button>
+                <button onclick="changeLanguage('tr')">TR</button>
+                <button id="globalThemeToggle" class="theme-toggle-button" aria-label="Toggle theme">☀️</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="project-container">
+        <article class="project-content">
+            <h1 class="project-title" data-translate="anayasa.title">Turkish Constitution Lemmatizer, 2025</h1>
+
+            <div class="lemmatizer-workspace">
+                <!-- Loading indicator overlay -->
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="spinner"></div>
+                    <span data-translate="anayasa.loadingText">Loading Constitution Database...</span>
+                </div>
+
+                <!-- Controls Bar -->
+                <div class="workspace-controls">
+                    <button id="random-sentence-btn" class="control-btn btn" data-translate="anayasa.randomBtn">Random Sentence</button>
+                    <div class="search-container">
+                        <input type="text" id="db-search-input" class="search-input" placeholder="Search the Constitution by word or root..." data-translate-placeholder="anayasa.searchPlaceholder">
+                        <button id="db-search-clear" class="search-clear-btn">&times;</button>
+                    </div>
+                </div>
+
+                <!-- Left sidebar: collapsible list of Parts/Articles -->
+                <aside class="navigator-panel">
+                    <div class="navigator-title" data-translate="anayasa.navigatorTitle">Navigator</div>
+                    <ul class="tree-root" id="navigator-tree">
+                        <!-- Filled dynamically -->
+                    </ul>
+                </aside>
+
+                <!-- Central sentences panel -->
+                <section class="sentences-view-panel" id="sentences-view-panel">
+                    <div class="active-path-breadcrumb" id="active-path-breadcrumb"></div>
+                    <h3 class="active-title-label" id="active-title-label"></h3>
+                    <div class="sentences-canvas" id="sentences-canvas">
+                        <svg class="connections-svg" id="connections-svg"></svg>
+                        <div class="sentences-list-wrapper" id="sentences-list-wrapper">
+                            <!-- Filled dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Global Search Results Pane (Hides sentences view when searching) -->
+                <section class="search-results-panel" id="search-results-panel">
+                    <h3 class="search-results-title">
+                        <span data-translate="anayasa.searchResultsTitle">Search Results</span> 
+                        (<span id="search-results-count">0</span>)
+                    </h3>
+                    <div class="search-grid-list" id="search-results-list-wrapper">
+                        <!-- Filled dynamically -->
+                    </div>
+                </section>
+
+                <!-- Right sidebar: Lemma Inspector -->
+                <aside class="inspector-panel">
+                    <div class="inspector-header">
+                        <h4 data-translate="anayasa.inspectorTitle">Lemma Inspector</h4>
+                        <button class="clear-inspector-btn" id="clear-inspector-btn" title="Clear inspector" style="display:none;">&times;</button>
+                    </div>
+                    <div class="inspector-body" id="inspector-body">
+                        <div class="inspector-empty-state" id="inspector-empty-state" data-translate="anayasa.emptyState">
+                            Click any word inside the article to inspect occurrences across the entire Constitution.
+                        </div>
+                        <div class="inspector-results-container" id="inspector-results-container" style="display:none;">
+                            <div class="inspector-lemma-summary">
+                                <span data-translate="anayasa.selectedLemmaLabel">Lemma:</span> 
+                                <span class="inspector-lemma-title" id="inspector-lemma-title"></span>
+                                <br>
+                                <small>
+                                    <span id="inspector-matches-count">0</span> 
+                                    <span data-translate="anayasa.matchesCountLabel">matches found.</span>
+                                </small>
+                            </div>
+                            <div class="inspector-results-list" id="inspector-results-list">
+                                <!-- Cards filled dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Floating lemma root tooltip -->
+            <div class="lemma-hover-tooltip" id="hover-tooltip">Same lemma: <span></span></div>
+
+            <div class="project-description">
+                <p data-translate="anayasa.description">This project adapts the text of the Turkish Constitution (1982) into an interactive semantic installation. Using a Turkey-specific natural language processing lemmatizer (Zeyrek/Zemberek), the system parses the formal legal text, extracts each word's morphological root (lemma), and constructs a client-side linguistic index.</p>
+                <p>By browsing through articles, chapters, and parts, the viewer interacts with the law not as static legal directives, but as a complex linguistic web. Hovering over a word dynamically maps and connects identical roots within the article using visual links. Clicking a word activates a global semantic index, exposing all other sections of the constitution containing the same root and providing non-linear pathways of navigation through the state's foundational document.</p>
+            </div>
+
+            <div class="project-metadata">
+                <div class="metadata-item">
+                    <h3>Year</h3>
+                    <p>2025</p>
+                </div>
+                <div class="metadata-item">
+                    <h3>Medium</h3>
+                    <p data-translate="anayasa.medium">Interactive web installation</p>
+                </div>
+                <div class="metadata-item">
+                    <h3>Technology</h3>
+                    <p>Python, Zeyrek NLP, JavaScript, SVG, JSON</p>
+                </div>
+            </div>
+
+            <div class="project-navigation">
+                <a href="coasts-of-lives.html" class="prev-project">
+                    <span class="nav-arrow">←</span>
+                    <span class="nav-title">Coasts of Lives</span>
+                </a>
+                <a href="../works.html" class="all-projects" data-translate="allWorks">All Works</a>
+                <a href="all-together.html" class="next-project">
+                    <span class="nav-title">All Together</span>
+                    <span class="nav-arrow">→</span>
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="../index.html" data-translate="home">Home</a>
+                <a href="../about.html" data-translate="about">About</a>
+                <a href="../works.html" data-translate="work">Work</a>
+                <a href="../blog.html" data-translate="blog">Blog</a>
+                <a href="../contact.html" data-translate="contact">Contact</a>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/yusufz.ozcan" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.behance.net/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/behance.png" alt="Behance">
+                </a>
+                <a href="https://vimeo.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/vimeo.png" alt="Vimeo">
+                </a>
+            </div>
+            <p data-translate="copyright">Copyright © 2024 Yusuf Özcan. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/translations.js"></script>
+    <script src="../assets/js/main.js"></script>
+    
+    <script>
+        // --- State Management ---
+        let database = null;
+        let activeArticleNode = null;
+        let selectedWordLemma = null;
+        let searchMode = false;
+
+        const uiElements = {
+            loadingOverlay: document.getElementById('loading-overlay'),
+            treeContainer: document.getElementById('navigator-tree'),
+            sentencesView: document.getElementById('sentences-view-panel'),
+            searchResultsView: document.getElementById('search-results-panel'),
+            activePathBreadcrumb: document.getElementById('active-path-breadcrumb'),
+            activeTitleLabel: document.getElementById('active-title-label'),
+            sentencesListWrapper: document.getElementById('sentences-list-wrapper'),
+            connectionsSvg: document.getElementById('connections-svg'),
+            hoverTooltip: document.getElementById('hover-tooltip'),
+            inspectorEmptyState: document.getElementById('inspector-empty-state'),
+            inspectorResultsContainer: document.getElementById('inspector-results-container'),
+            inspectorLemmaTitle: document.getElementById('inspector-lemma-title'),
+            inspectorMatchesCount: document.getElementById('inspector-matches-count'),
+            inspectorResultsList: document.getElementById('inspector-results-list'),
+            clearInspectorBtn: document.getElementById('clear-inspector-btn'),
+            searchInput: document.getElementById('db-search-input'),
+            searchClearBtn: document.getElementById('db-search-clear'),
+            searchResultsCount: document.getElementById('search-results-count'),
+            searchResultsList: document.getElementById('search-results-list-wrapper'),
+            randomBtn: document.getElementById('random-sentence-btn')
+        };
+
+        // --- Init: Load JSON data ---
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('../assets/data/anayasa.json')
+                .then(res => res.json())
+                .then(data => {
+                    database = data;
+                    buildNavigatorTree(database.hierarchy, uiElements.treeContainer);
+                    
+                    // Hide overlay
+                    uiElements.loadingOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        uiElements.loadingOverlay.style.display = 'none';
+                    }, 500);
+                    
+                    // Load a random article to start
+                    loadRandomArticle();
+                })
+                .catch(err => {
+                    console.error("Error loading Constitution database:", err);
+                    uiElements.loadingOverlay.innerHTML = '<span style="color:red">Failed to load Constitution database.</span>';
+                });
+
+            // Set up search and control events
+            uiElements.searchInput.addEventListener('input', handleGlobalSearch);
+            uiElements.searchClearBtn.addEventListener('click', clearGlobalSearch);
+            uiElements.randomBtn.addEventListener('click', loadRandomSentence);
+            uiElements.clearInspectorBtn.addEventListener('click', clearInspector);
+
+            // Handle SVG connection lines redrawing on resize
+            window.addEventListener('resize', () => {
+                if (activeArticleNode) {
+                    clearSVG();
+                    // If a word is hovered, redraw. But easiest is to clear.
+                }
+            });
+        });
+
+        // --- DOM Builders ---
+
+        // Recursive tree builder
+        function buildNavigatorTree(hierarchy, container) {
+            hierarchy.forEach(node => {
+                const li = document.createElement('li');
+                li.className = `tree-node type-${node.type}`;
+                
+                const header = document.createElement('div');
+                header.className = 'node-header';
+                
+                const hasChildren = node.children && node.children.length > 0;
+                
+                // Content label
+                const label = document.createElement('span');
+                label.textContent = node.name;
+                
+                if (hasChildren) {
+                    const toggle = document.createElement('span');
+                    toggle.className = 'node-toggle-icon';
+                    toggle.textContent = '▸';
+                    header.appendChild(toggle);
+                    
+                    header.appendChild(label);
+                    
+                    const ul = document.createElement('ul');
+                    ul.className = 'node-children';
+                    
+                    // Toggle expand/collapse
+                    header.addEventListener('click', (e) => {
+                        const isExpanded = ul.style.display === 'block';
+                        ul.style.display = isExpanded ? 'none' : 'block';
+                        toggle.textContent = isExpanded ? '▸' : '▾';
+                        toggle.classList.toggle('expanded', !isExpanded);
+                    });
+                    
+                    li.appendChild(header);
+                    li.appendChild(ul);
+                    buildNavigatorTree(node.children, ul);
+                } else {
+                    // Node without children is an Article (MADDE)
+                    header.appendChild(label);
+                    header.addEventListener('click', () => {
+                        selectArticle(node, header);
+                    });
+                    li.appendChild(header);
+                }
+                
+                container.appendChild(li);
+            });
+        }
+
+        // --- Selection & View Loading ---
+
+        function selectArticle(node, headerElement) {
+            // Clear search view
+            clearGlobalSearch();
+
+            // Handle active styling in tree
+            if (activeArticleNode) {
+                const prevActive = document.querySelector('.active-node');
+                if (prevActive) prevActive.classList.remove('active-node');
+            }
+            headerElement.classList.add('active-node');
+            activeArticleNode = node;
+            
+            // Expand all parents in the sidebar
+            let parentEl = headerElement.parentElement;
+            while (parentEl && parentEl !== uiElements.treeContainer) {
+                if (parentEl.tagName === 'UL') {
+                    parentEl.style.display = 'block';
+                    // Update header icons of expanded parents
+                    const siblingHeader = parentEl.previousElementSibling;
+                    if (siblingHeader && siblingHeader.classList.contains('node-header')) {
+                        const toggle = siblingHeader.querySelector('.node-toggle-icon');
+                        if (toggle) {
+                            toggle.textContent = '▾';
+                            toggle.classList.add('expanded');
+                        }
+                    }
+                }
+                parentEl = parentEl.parentElement;
+            }
+
+            // Fill details
+            uiElements.activeTitleLabel.textContent = node.name;
+            
+            // Get path from the first sentence in this article
+            let firstSentenceId = node.sentence_ids && node.sentence_ids[0];
+            let breadcrumb = "";
+            if (firstSentenceId && database.sentences[firstSentenceId]) {
+                breadcrumb = database.sentences[firstSentenceId].path;
+            }
+            uiElements.activePathBreadcrumb.textContent = breadcrumb;
+
+            // Load sentences
+            uiElements.sentencesListWrapper.innerHTML = '';
+            clearSVG();
+
+            if (node.sentence_ids && node.sentence_ids.length > 0) {
+                node.sentence_ids.forEach(sentenceId => {
+                    const sentenceData = database.sentences[sentenceId];
+                    if (!sentenceData) return;
+
+                    const p = document.createElement('p');
+                    p.className = 'article-sentence-block';
+                    p.dataset.sentenceId = sentenceId;
+
+                    sentenceData.tokens.forEach(token => {
+                        const span = document.createElement('span');
+                        span.textContent = token.token;
+                        
+                        if (token.is_word) {
+                            span.className = 'word-token';
+                            span.dataset.lemma = token.lemma;
+                            span.title = `Lemma: ${token.lemma}`;
+                            
+                            // Hover actions
+                            span.addEventListener('mouseenter', (e) => {
+                                handleWordHover(token.lemma, span, e);
+                            });
+                            span.addEventListener('mouseleave', () => {
+                                handleWordLeave();
+                            });
+                            
+                            // Click action
+                            span.addEventListener('click', () => {
+                                inspectLemma(token.lemma);
+                            });
+                        }
+                        
+                        p.appendChild(span);
+                    });
+
+                    uiElements.sentencesListWrapper.appendChild(p);
+                });
+            } else {
+                uiElements.sentencesListWrapper.innerHTML = '<p class="inspector-empty-state">No sentences in this article.</p>';
+            }
+
+            // Scroll sentences view to top
+            uiElements.sentencesView.scrollTop = 0;
+        }
+
+        // --- Interactive Lemma Visual Connections (SVG & Highlights) ---
+
+        function handleWordHover(lemma, element, event) {
+            if (!lemma) return;
+
+            // Highlight tooltip
+            uiElements.hoverTooltip.style.opacity = '1';
+            uiElements.hoverTooltip.querySelector('span').textContent = lemma;
+            
+            // Tooltip positioning
+            updateTooltipPosition(event);
+            document.addEventListener('mousemove', updateTooltipPosition);
+
+            // Highlight identical lemmas in current article
+            const container = uiElements.sentencesListWrapper;
+            const sameWords = container.querySelectorAll(`.word-token[data-lemma="${lemma}"]`);
+            
+            sameWords.forEach(word => {
+                word.classList.add('connected');
+                if (word === element) {
+                    word.classList.add('hovered-root');
+                }
+            });
+
+            // Draw SVG Lines connecting them
+            drawSVGConnections(element, sameWords);
+        }
+
+        function updateTooltipPosition(e) {
+            uiElements.hoverTooltip.style.left = `${e.clientX}px`;
+            uiElements.hoverTooltip.style.top = `${e.clientY}px`;
+        }
+
+        function handleWordLeave() {
+            uiElements.hoverTooltip.style.opacity = '0';
+            document.removeEventListener('mousemove', updateTooltipPosition);
+
+            const words = uiElements.sentencesListWrapper.querySelectorAll('.word-token');
+            words.forEach(word => {
+                word.classList.remove('connected', 'hovered-root');
+            });
+
+            clearSVG();
+        }
+
+        function drawSVGConnections(hoveredElement, connectedElements) {
+            clearSVG();
+            if (connectedElements.length <= 1) return;
+
+            const canvasRect = uiElements.sentencesCanvas.getBoundingClientRect();
+            
+            // Coordinates of hovered element
+            const hRect = hoveredElement.getBoundingClientRect();
+            const x1 = hRect.left - canvasRect.left + (hRect.width / 2);
+            const y1 = hRect.top - canvasRect.top + (hRect.height / 2);
+
+            connectedElements.forEach(el => {
+                if (el === hoveredElement) return;
+
+                const targetRect = el.getBoundingClientRect();
+                const x2 = targetRect.left - canvasRect.left + (targetRect.width / 2);
+                const y2 = targetRect.top - canvasRect.top + (targetRect.height / 2);
+
+                // Create SVG line
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y2);
+                
+                // Dashed styling matching portfolio lines
+                line.setAttribute('stroke', 'var(--accent-color)');
+                line.setAttribute('stroke-width', '1.2');
+                line.setAttribute('stroke-dasharray', '3 3');
+                line.setAttribute('opacity', '0.6');
+
+                uiElements.connectionsSvg.appendChild(line);
+            });
+        }
+
+        function clearSVG() {
+            uiElements.connectionsSvg.innerHTML = '';
+        }
+
+        // --- Lemma Inspector (Occurrences browser) ---
+
+        function inspectLemma(lemma) {
+            if (!lemma) return;
+            selectedWordLemma = lemma;
+
+            uiElements.inspectorEmptyState.style.display = 'none';
+            uiElements.inspectorResultsContainer.style.display = 'block';
+            uiElements.clearInspectorBtn.style.display = 'block';
+
+            uiElements.inspectorLemmaTitle.textContent = lemma;
+
+            // Get matches
+            const matchIds = database.stem_map[lemma] || [];
+            uiElements.inspectorMatchesCount.textContent = matchIds.length;
+
+            uiElements.inspectorResultsList.innerHTML = '';
+
+            matchIds.forEach(sentenceId => {
+                const sData = database.sentences[sentenceId];
+                if (!sData) return;
+
+                const card = document.createElement('div');
+                card.className = 'inspector-result-card';
+                card.addEventListener('click', () => {
+                    navigateToSentence(sentenceId);
+                });
+
+                const header = document.createElement('div');
+                header.className = 'card-header';
+                
+                const title = document.createElement('span');
+                title.className = 'card-article-title';
+                title.textContent = sData.article;
+                
+                header.appendChild(title);
+                card.appendChild(header);
+
+                // Render sentence text with matching words highlighted
+                const textDiv = document.createElement('div');
+                textDiv.className = 'card-text';
+                textDiv.innerHTML = getHighlightedSentenceHTML(sData.tokens, lemma);
+                card.appendChild(textDiv);
+
+                uiElements.inspectorResultsList.appendChild(card);
+            });
+        }
+
+        function getHighlightedSentenceHTML(tokens, lemma) {
+            let html = "";
+            tokens.forEach(token => {
+                if (token.is_word && token.lemma === lemma) {
+                    html += `<mark>${token.token}</mark>`;
+                } else {
+                    html += token.token;
+                }
+            });
+            return html;
+        }
+
+        function clearInspector() {
+            selectedWordLemma = null;
+            uiElements.inspectorEmptyState.style.display = 'block';
+            uiElements.inspectorResultsContainer.style.display = 'none';
+            uiElements.clearInspectorBtn.style.display = 'none';
+        }
+
+        // --- Navigation utilities ---
+
+        function navigateToSentence(sentenceId) {
+            // Find article node in hierarchy
+            const sData = database.sentences[sentenceId];
+            if (!sData) return;
+
+            const articleName = sData.article;
+            
+            // Find in hierarchy
+            let articleNode = findArticleNode(database.hierarchy, articleName);
+            if (articleNode) {
+                // Find node header in tree DOM
+                const treeHeaders = document.querySelectorAll('.navigator-panel .node-header');
+                let targetHeader = null;
+                for (let h of treeHeaders) {
+                    if (h.textContent.trim() === articleName) {
+                        targetHeader = h;
+                        break;
+                    }
+                }
+                
+                if (targetHeader) {
+                    selectArticle(articleNode, targetHeader);
+                    
+                    // Highlight the target sentence in display
+                    setTimeout(() => {
+                        const blocks = uiElements.sentencesListWrapper.querySelectorAll('.article-sentence-block');
+                        blocks.forEach(block => {
+                            if (block.dataset.sentenceId === sentenceId) {
+                                block.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                                block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                setTimeout(() => {
+                                    block.style.transition = 'background-color 1s';
+                                    block.style.backgroundColor = 'transparent';
+                                }, 1500);
+                            }
+                        });
+                    }, 300);
+                }
+            }
+        }
+
+        function findArticleNode(nodes, name) {
+            for (let n of nodes) {
+                if (n.type === 'article' && n.name === name) {
+                    return n;
+                }
+                if (n.children) {
+                    let found = findArticleNode(n.children, name);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        function loadRandomArticle() {
+            if (!database) return;
+            
+            // Collect all articles
+            const articles = [];
+            function collect(nodes) {
+                nodes.forEach(n => {
+                    if (n.type === 'article') articles.push(n);
+                    if (n.children) collect(n.children);
+                });
+            }
+            collect(database.hierarchy);
+            
+            if (articles.length > 0) {
+                const randomArticle = articles[Math.floor(Math.random() * articles.length)];
+                
+                // Find tree DOM element
+                const treeHeaders = document.querySelectorAll('.navigator-panel .node-header');
+                let targetHeader = null;
+                for (let h of treeHeaders) {
+                    if (h.textContent.trim() === randomArticle.name) {
+                        targetHeader = h;
+                        break;
+                    }
+                }
+                if (targetHeader) {
+                    selectArticle(randomArticle, targetHeader);
+                }
+            }
+        }
+
+        function loadRandomSentence() {
+            if (!database) return;
+            const sentenceKeys = Object.keys(database.sentences);
+            if (sentenceKeys.length > 0) {
+                const randKey = sentenceKeys[Math.floor(Math.random() * sentenceKeys.length)];
+                navigateToSentence(randKey);
+            }
+        }
+
+        // --- Global Text Search ---
+
+        function handleGlobalSearch() {
+            const query = uiElements.searchInput.value.trim().toLocaleLowerCase('tr-TR');
+            if (query.length < 2) {
+                if (searchMode) {
+                    clearGlobalSearch();
+                }
+                return;
+            }
+
+            searchMode = true;
+            uiElements.searchClearBtn.style.display = 'block';
+            uiElements.sentencesView.style.display = 'none';
+            uiElements.searchResultsView.style.display = 'block';
+
+            uiElements.searchResultsList.innerHTML = '';
+            
+            // Search lemmas and sentence text
+            let matches = [];
+            Object.entries(database.sentences).forEach(([id, sData]) => {
+                // Check if text contains string
+                const txt = sData.text.toLocaleLowerCase('tr-TR');
+                if (txt.includes(query)) {
+                    matches.push({ id, sData, score: txt.indexOf(query) });
+                }
+            });
+
+            uiElements.searchResultsCount.textContent = matches.length;
+
+            if (matches.length > 0) {
+                // Limit to 60 matches for performance
+                matches.slice(0, 60).forEach(match => {
+                    const card = document.createElement('div');
+                    card.className = 'inspector-result-card';
+                    card.addEventListener('click', () => {
+                        navigateToSentence(match.id);
+                    });
+
+                    const header = document.createElement('div');
+                    header.className = 'card-header';
+                    
+                    const title = document.createElement('span');
+                    title.className = 'card-article-title';
+                    title.textContent = match.sData.article;
+                    
+                    const path = document.createElement('span');
+                    path.textContent = match.sData.path;
+                    path.style.fontSize = '0.7rem';
+                    path.style.maxWidth = '180px';
+                    path.style.overflow = 'hidden';
+                    path.style.textOverflow = 'ellipsis';
+                    path.style.whiteSpace = 'nowrap';
+                    
+                    header.appendChild(title);
+                    header.appendChild(path);
+                    card.appendChild(header);
+
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'card-text';
+                    
+                    // Simple highlighting of query
+                    const rawText = match.sData.text;
+                    const qIndex = rawText.toLocaleLowerCase('tr-TR').indexOf(query);
+                    let highlightedText = rawText;
+                    if (qIndex >= 0) {
+                        highlightedText = rawText.slice(0, qIndex) + 
+                                          `<mark>${rawText.slice(qIndex, qIndex + query.length)}</mark>` + 
+                                          rawText.slice(qIndex + query.length);
+                    }
+                    textDiv.innerHTML = highlightedText;
+                    
+                    card.appendChild(textDiv);
+                    uiElements.searchResultsList.appendChild(card);
+                });
+            } else {
+                uiElements.searchResultsList.innerHTML = '<div class="inspector-empty-state" data-translate="anayasa.noMatchesSearch">No matches found for your search.</div>';
+            }
+        }
+
+        function clearGlobalSearch() {
+            searchMode = false;
+            uiElements.searchInput.value = '';
+            uiElements.searchClearBtn.style.display = 'none';
+            uiElements.sentencesView.style.display = 'flex';
+            uiElements.searchResultsView.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

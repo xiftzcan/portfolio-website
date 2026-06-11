@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- SEO Meta Tags -->
+        <meta name="title" content="Perpetual Forgetting (2023) - Generative Text Model">
+        <meta name="description" content="A generative model applying Claude Shannon's Markov chain concept to Maurice Blanchot's 'Waiting and Forgetting,' creating continuously self-reproducing text that embodies the act of forgetting.">
+        <meta name="keywords" content="generative art, Markov chains, Maurice Blanchot, text generation, algorithmic literature, digital humanities, computational literature, Jacques Derrida">
+        <meta name="author" content="Yusuf Özcan">
+
+        <!-- Open Graph Tags -->
+        <meta property="og:type" content="artwork">
+        <meta property="og:title" content="Perpetual Forgetting (2023)">
+        <meta property="og:description" content="Generative text work applying mathematical communication theory to literary text, creating a self-reproducing narrative that continuously disrupts and reconstructs itself.">
+        <meta property="og:image" content="https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg">
+        <meta property="og:url" content="https://yusufozcan.info/projects/perpetual-forgetting.html">
+        <meta property="og:type" content="website">
+
+        <!-- Twitter Card Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Perpetual Forgetting (2023)">
+        <meta name="twitter:description" content="Algorithmic literature project using Markov chains to transform Blanchot's work into a perpetually self-reproducing text that embodies forgetting.">
+        <meta name="twitter:image" content="https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg">
+
+        <title>Perpetual Forgetting (2023) | Yusuf Özcan</title>
+        <link rel="canonical" href="https://yusufozcan.info/projects/perpetual-forgetting.html">
+
+        <link rel="stylesheet" href="../assets/css/main.css">
+        <link rel="stylesheet" href="../assets/css/project.css">
+
+        <style>
+            /* --- Perpetual Forgetting Text Player --- */
+            .player-section {
+                margin-top: 2.5rem;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color-light);
+                border-radius: 12px;
+                padding: 2.2rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+                transition: all var(--transition-speed) ease;
+            }
+            [data-theme="dark"] .player-section {
+                border-color: var(--border-color-dark);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            }
+
+            .player-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                padding-bottom: 1.2rem;
+                margin-bottom: 1.8rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            [data-theme="dark"] .player-header {
+                border-bottom-color: rgba(255, 255, 255, 0.08);
+            }
+
+            .player-header h4 {
+                font-family: 'Fira Sans Condensed', sans-serif;
+                font-size: 1.4rem;
+                margin: 0;
+                letter-spacing: 0.8px;
+                text-transform: uppercase;
+                color: var(--text-color);
+            }
+
+            .player-controls {
+                display: flex;
+                align-items: center;
+                gap: 1.2rem;
+                flex-wrap: wrap;
+            }
+
+            .control-btn {
+                background-color: var(--background-color);
+                border: 1px solid var(--border-color-light);
+                color: var(--text-color);
+                padding: 0.6rem 1.2rem;
+                border-radius: 6px;
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: all 0.25s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            [data-theme="dark"] .control-btn {
+                border-color: var(--border-color-dark);
+            }
+            .control-btn:hover {
+                background-color: var(--text-color);
+                color: var(--card-bg);
+                border-color: var(--text-color);
+            }
+
+            .speed-control {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 0.85rem;
+                color: var(--text-color);
+            }
+
+            .speed-control input[type="range"] {
+                width: 140px;
+                cursor: pointer;
+                accent-color: var(--text-color);
+            }
+
+            .player-display {
+                min-height: 140px;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2.5rem;
+                background: var(--background-color);
+                border-radius: 8px;
+                border: 1px dashed var(--border-color-light);
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 1.8rem;
+                transition: all var(--transition-speed) ease;
+            }
+            [data-theme="dark"] .player-display {
+                border-color: var(--border-color-dark);
+            }
+
+            .player-track {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                position: absolute;
+                left: 0;
+                gap: 1.2rem;
+                transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+                will-change: transform;
+                white-space: nowrap;
+            }
+
+            /* Word animations and fades */
+            .player-word {
+                display: inline-block;
+                transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.5s ease, text-shadow 0.5s ease;
+                transform-origin: center;
+                opacity: 0;
+                transform: scale(0.8) translateY(5px);
+                color: var(--text-color);
+            }
+
+            .player-word.word-current {
+                opacity: 1;
+                color: #000; /* Pure black for high-contrast light theme */
+                transform: scale(1.15) translateY(0);
+                text-shadow: none;
+            }
+            [data-theme="dark"] .player-word.word-current {
+                color: #fff; /* Pure white for high-contrast dark theme */
+                text-shadow: none;
+            }
+
+            .player-word.word-trail-1 {
+                opacity: 0.85;
+                transform: scale(1.0) translateY(0);
+            }
+
+            .player-word.word-trail-2 {
+                opacity: 0.6;
+                transform: scale(0.95);
+            }
+
+            .player-word.word-trail-3 {
+                opacity: 0.35;
+                transform: scale(0.9);
+            }
+
+            .player-word.word-trail-4 {
+                opacity: 0.18;
+                transform: scale(0.85);
+            }
+
+            .player-word.word-trail-5 {
+                opacity: 0.08;
+                transform: scale(0.8);
+            }
+
+            .player-word.word-faded {
+                opacity: 0;
+                transform: scale(0.7) translateY(-5px);
+                pointer-events: none;
+            }
+        </style>
+
+        <link rel="icon" type="image/svg" href="../assets/icons/fav_icon.svg">
+
+    </head>
+    <body>
+        <header>
+            <nav id="navbar">
+                <div class="logo">
+                    <a href="../index.html">
+                        <img src="../assets/icons/logo.png" alt="Yusuf Özcan - Multimedia Artist Logo" id="navbarLogo">
+                    </a>
+                </div>
+                <button id="hamburger" class="hamburger" aria-label="Toggle navigation">☰</button>
+                <ul class="nav-links">
+                    <li><a href="../index.html" data-translate="home">Home</a></li>
+                    <li><a href="../about.html" data-translate="about">About</a></li>
+                    <li><a href="../works.html" data-translate="work">Work</a></li>
+                    <li><a href="../blog.html" data-translate="blog">Blog</a></li>
+                    <li><a href="../contact.html" data-translate="contact">Contact</a></li>
+                </ul>
+                <div class="language-switcher">
+                    <button onclick="changeLanguage('en')">EN</button>
+                    <button onclick="changeLanguage('tr')">TR</button>
+                    <button id="globalThemeToggle" class="theme-toggle-button" aria-label="Toggle theme">
+                        ☀️ </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="project-container">
+            <article class="project-content">
+                <h1 class="project-title" data-translate="forgetting.title">Perpetual Forgetting, 2023</h1>
+
+                <div class="text-generator">
+                    <h3 data-translate="forgetting.experienceTitle">Experience the Text Generator</h3>
+
+                    <form id="generatorForm" class="generator-form">
+                        <div class="form-group">
+                            <label data-translate="forgetting.uploadLabel">Upload Text File (UTF-8 encoded):</label>
+                            <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                <label for="file" class="control-btn" data-translate="forgetting.chooseFileBtn" style="cursor: pointer; margin: 0; display: inline-block;">Choose File</label>
+                                <input type="file" id="file" name="file" accept=".txt" style="display: none;">
+                                <span id="fileStatus" style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; opacity: 0.8; color: var(--text-color);">[Default: bekleyis_unutus.txt]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customText" data-translate="forgetting.orWriteText">Or write/paste your own text:</label>
+                            <textarea id="customText" name="customText" placeholder="Enter your text here..." data-translate-placeholder="forgetting.placeholderText"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sentences" data-translate="forgetting.numSentences">Number of Sentences:</label>
+                            <input type="number" id="sentences" name="sentences" value="100" min="1" max="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="order" data-translate="forgetting.markovOrder">Markov Chain Order (1-3):</label>
+                            <input type="number" id="order" name="order" value="2" min="1" max="3">
+                            <small data-translate="forgetting.markovNote">Lower values (1-2) produce more novel but less coherent text.</small>
+                        </div>
+
+                        <button type="submit" class="generator-button" data-translate="forgetting.generateBtn">Generate Text</button>
+                    </form>
+
+                    <div id="loadingIndicator" class="loading-indicator" data-translate="forgetting.loadingText">
+                        Generating text... This may take a moment.
+                    </div>
+
+                    <div id="generatorResult" class="generator-result"></div>
+
+                    <!-- Perpetual Forgetting Text Player -->
+                    <div id="playerSection" class="player-section" style="display: none;">
+                        <div class="player-header">
+                            <h4 data-translate="forgetting.playerTitle">Forgetting Stream</h4>
+                            <div class="player-controls">
+                                <button id="playPauseBtn" class="control-btn" data-translate="forgetting.play">▶ Play</button>
+                                <button id="resetBtn" class="control-btn" data-translate="forgetting.reset">↺ Reset</button>
+                                <div class="speed-control">
+                                    <label for="speedSlider" data-translate="forgetting.speed">Interval:</label>
+                                    <input type="range" id="speedSlider" min="200" max="1500" value="500" step="50">
+                                    <span id="speedVal">500ms</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="playerDisplay" class="player-display">
+                            <div id="playerTrack" class="player-track"></div>
+                        </div>
+                    </div>
+
+                    <button id="debugToggle" data-translate="forgetting.showDebug">Show/Hide Debug Info</button>
+                    <div id="debugInfo" class="debug-info"></div>
+
+                    <p class="generator-note">
+                        <em>
+                            <span data-translate="forgetting.notePre">Note: You can 1) download "Bekleyiş Unutuş" (Waiting and Forgetting) by Maurice Blanchot from</span>
+                            <a href="../assets/texts/bekleyis_unutus.txt" download data-translate="forgetting.noteLink">here</a>
+                            <span data-translate="forgetting.notePost">, 2) upload your own text file, or 3) write/paste text directly in the text editor above.</span>
+                        </em>
+                    </p>
+                </div>
+
+                <div class="project-description">
+                    <p data-translate="forgetting.description">In Claude Shannon's 1948 article "A Mathematical Theory of Communication," it is argued that the randomness connected through the Markov chain can be applied to letters and then to words, and that in this way, a sliced text can be created that shares the same statistical structure as a real text.</p>
+                    <p>Maurice Blanchot, whose style and the differences of his texts I liken to the differences of expression in my own work, has a story called "Waiting and Forgetting," which I always enjoy reading. This is a text that can be said to be completely detached from the plot. This is one of the reasons why I enjoy reading it all the time. Because it also contains a kind of constant forgetting.</p>
+                    <p>Derrida, in an interview for "Waiting and Forgetting," states: "'Awaiting Oblivion' is perhaps the last book with a form of fiction, the event of the conceivable that gives birth to the narrative, a tale that emerges as an event, neither true nor false, and in which the sense of fiction... begins to tremble." Emphasizes the slice-like structure of the text. Therefore, through the Markov chain, I have tried to create a text that repeats Blanchot and constantly reproduces itself.</p>
+                </div>
+
+                <div class="project-metadata">
+                    <div class="metadata-item">
+                        <h3>Year</h3>
+                        <p>2023</p>
+                    </div>
+                    <div class="metadata-item">
+                        <h3>Medium</h3>
+                        <p>Interactive digital installation, generative text</p>
+                    </div>
+                    <div class="metadata-item">
+                        <h3>Technology</h3>
+                        <p>Markov chains, HTML/CSS/JavaScript</p>
+                    </div>
+                </div>
+
+                <div class="project-navigation">
+                    <a href="bir-ve-uc-bayrak.html" class="prev-project">
+                        <span class="nav-arrow">←</span>
+                        <span class="nav-title">Bir ve Üç Bayrak</span>
+                    </a>
+                    <a href="../works.html" class="all-projects" data-translate="allWorks">All Works</a>
+                    <a href="bridging-the-gap.html" class="next-project">
+                        <span class="nav-title">Bridging the Gap</span>
+                        <span class="nav-arrow">→</span>
+                    </a>
+                </div>
+            </article>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <a href="../index.html" data-translate="home">Home</a>
+                <a href="../about.html" data-translate="about">About</a>
+                <a href="../works.html" data-translate="work">Work</a>
+                <a href="../blog.html" data-translate="blog">Blog</a> 
+                <a href="../contact.html" data-translate="contact">Contact</a>
+            </div>
+
+            <div class="social-icons">
+                <a href="https://www.instagram.com/yusufz.ozcan" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.behance.net/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/behance.png" alt="Behance">
+                </a>
+                <a href="https://vimeo.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/vimeo.png" alt="Vimeo">
+                </a>
+            </div>
+
+            <p data-translate="copyright">Copyright © 2024 Yusuf Özcan. All Rights Reserved.</p>
+        </footer>
+
+        <script src="../assets/js/translations.js"></script>
+        <script src="../assets/js/main.js"></script> <script>
+            // --- Markov Chain Generator Class ---
+            class SimpleMarkovGenerator {
+                constructor(text, order = 2) {
+                    this.order = order;
+                    this.models = {};
+                    this.beginnings = [];
+
+                    // Debug info collection
+                    this.debug = {
+                        inputLength: text.length,
+                        sentences: 0,
+                        validSentences: 0,
+                        beginnings: 0,
+                        modelSizes: {}
+                    };
+
+                    // Weak ending words list (both English and Turkish) to prevent sentences from ending on prepositions/conjunctions
+                    this.weakEndingWords = new Set([
+                        'the', 'a', 'an', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from',
+                        'by', 'of', 'in', 'with', 'as', 'about', 'into', 'through', 'during', 'before',
+                        'after', 'above', 'below', 'under', 'over', 'again', 'further', 'then',
+                        'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both',
+                        'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'not',
+                        'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will',
+                        'just', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'my', 'your',
+                        'their', 'its', 'our', 'his', 'her',
+                        // Turkish prepositions, conjunctions, and particles
+                        've', 'veya', 'ile', 'ama', 'fakat', 'lakin', 'ancak', 'ise', 'ki', 'çünkü',
+                        'bu', 'şu', 'o', 'bir', 'her', 'hiç', 'bazı', 'tüm', 'bütün', 'da', 'de',
+                        'mi', 'mı', 'mu', 'mü', 'için', 'gibi', 'kadar', 'göre', 'karşı',
+                        'doğru', 'rağmen', 'önce', 'sonra', 'beri', 'üzere', 'dolayı', 'ötürü', 'dek',
+                        'değin'
+                    ]);
+
+                    // 1. Simple text cleaning
+                    text = text.replace(/\s+/g, ' ').trim();
+
+                    // 2. Protect abbreviations from breaking sentences
+                    const abbreviations = [
+                        'dr', 'prof', 'mr', 'mrs', 'ms', 'vs', 'eg', 'ie', 'etc',
+                        'vb', 'sf', 'bkz', 'bknz', 'alm', 'ing', 'cad', 'sok', 'mah'
+                    ];
+                    let sanitizedText = text;
+                    abbreviations.forEach(abbr => {
+                        const regex = new RegExp(`\\b(${abbr})\\.(\\s+)`, 'gi');
+                        sanitizedText = sanitizedText.replace(regex, '$1\uE000$2');
+                    });
+
+                    // 3. Split sentences while retaining their final punctuation
+                    // Mark sentence ends with a special token, then split
+                    let markedText = sanitizedText.replace(/([.!?])\s+/g, '$1|SENTENCE_END|');
+                    const sentences = markedText.split('|SENTENCE_END|')
+                        .filter(s => s.trim().length > 0)
+                        .map(s => s.replace(/\uE000/g, '.')); // Restore abbreviation dots
+
+                    this.debug.sentences = sentences.length;
+
+                    // Word co-occurrences matrix for dynamic semantic similarity (Strategy 1)
+                    this.coOccurrences = {};
+                    this.similarityCache = {};
+
+                    // Process each sentence
+                    sentences.forEach(sentence => {
+                        sentence = sentence.trim();
+                        if (!sentence) return;
+
+                        const words = sentence.split(/\s+/).filter(w => w.length > 0);
+
+                        // Build co-occurrence data
+                        const windowSize = 3;
+                        for (let i = 0; i < words.length; i++) {
+                            const word = words[i].toLocaleLowerCase('tr-TR').replace(/[^a-zğıüşöçâîû]/gi, '');
+                            if (!word) continue;
+                            if (!this.coOccurrences[word]) {
+                                this.coOccurrences[word] = {};
+                            }
+                            const start = Math.max(0, i - windowSize);
+                            const end = Math.min(words.length - 1, i + windowSize);
+                            for (let j = start; j <= end; j++) {
+                                if (i === j) continue;
+                                const neighbor = words[j].toLocaleLowerCase('tr-TR').replace(/[^a-zğıüşöçâîû]/gi, '');
+                                if (!neighbor) continue;
+                                this.coOccurrences[word][neighbor] = (this.coOccurrences[word][neighbor] || 0) + 1;
+                            }
+                        }
+
+                        // Skip sentences too short for the current order
+                        if (words.length < this.order) return;
+
+                        this.debug.validSentences++;
+
+                        // Store the beginning sequence of words
+                        const beginning = words.slice(0, this.order);
+                        this.beginnings.push(beginning);
+                        this.debug.beginnings++;
+
+                        // Build models for all state sizes from 1 to order
+                        for (let stateSize = 1; stateSize <= this.order; stateSize++) {
+                            if (!this.models[stateSize]) {
+                                this.models[stateSize] = {};
+                                this.debug.modelSizes[stateSize] = 0;
+                            }
+
+                            // Create state transitions
+                            for (let i = 0; i <= words.length - stateSize; i++) {
+                                const state = words.slice(i, i + stateSize).join(' ');
+
+                                // Get the next word if available
+                                if (i + stateSize < words.length) {
+                                    const nextWord = words[i + stateSize];
+
+                                    // Add to the model
+                                    if (!this.models[stateSize][state]) {
+                                        this.models[stateSize][state] = [];
+                                        this.debug.modelSizes[stateSize]++;
+                                    }
+                                    this.models[stateSize][state].push(nextWord);
+                                }
+                            }
+                        }
+                    });
+
+                    // Add fallback if no beginnings were found
+                    if (this.beginnings.length === 0 && sentences.length > 0) {
+                        const firstSentenceWords = sentences[0].split(/\s+/).filter(w => w.length > 0);
+                        if (firstSentenceWords.length >= this.order) {
+                            this.beginnings.push(firstSentenceWords.slice(0, this.order));
+                            this.debug.beginnings++;
+                        } else if (firstSentenceWords.length > 0) {
+                            this.beginnings.push(firstSentenceWords);
+                            this.debug.beginnings++;
+                        }
+                    }
+                }
+
+                // Method to get debug information
+                getDebugInfo() {
+                    return {
+                        orderUsed: this.order,
+                        inputLength: this.debug.inputLength,
+                        sentencesFound: this.debug.sentences,
+                        validSentences: this.debug.validSentences,
+                        beginningsCollected: this.debug.beginnings,
+                        modelSizes: this.debug.modelSizes
+                    };
+                }
+
+                // Calculate Cosine Similarity between two co-occurrence maps
+                cosineSimilarity(vecA, vecB) {
+                    let dotProduct = 0;
+                    let normA = 0;
+                    let normB = 0;
+
+                    for (const [key, val] of Object.entries(vecA)) {
+                        normA += val * val;
+                        if (vecB[key]) {
+                            dotProduct += val * vecB[key];
+                        }
+                    }
+                    for (const val of Object.values(vecB)) {
+                        normB += val * val;
+                    }
+
+                    if (normA === 0 || normB === 0) return 0;
+                    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+                }
+
+                // Find the most semantically similar word in the corpus based on co-occurrence vectors
+                findSimilarWord(word) {
+                    const cleanWord = word.toLocaleLowerCase('tr-TR').replace(/[^a-zğıüşöçâîû]/gi, '');
+                    if (!cleanWord || !this.coOccurrences[cleanWord]) return null;
+                    
+                    if (this.similarityCache[cleanWord] !== undefined) {
+                        return this.similarityCache[cleanWord];
+                    }
+
+                    const vecA = this.coOccurrences[cleanWord];
+                    let bestWord = null;
+                    let bestSimilarity = -1;
+
+                    // Compare with other words in the vocabulary
+                    for (const [otherWord, vecB] of Object.entries(this.coOccurrences)) {
+                        if (otherWord === cleanWord) continue;
+                        
+                        // Heuristic: check if they share at least one neighbor to avoid expensive cosine similarity
+                        let sharesNeighbors = false;
+                        for (const key of Object.keys(vecA)) {
+                            if (vecB[key]) {
+                                sharesNeighbors = true;
+                                break;
+                            }
+                        }
+                        if (!sharesNeighbors) continue;
+
+                        const sim = this.cosineSimilarity(vecA, vecB);
+                        if (sim > bestSimilarity) {
+                            bestSimilarity = sim;
+                            bestWord = otherWord;
+                        }
+                    }
+
+                    // Only bridge if similarity is strong enough
+                    if (bestSimilarity > 0.15) {
+                        this.similarityCache[cleanWord] = bestWord;
+                        return bestWord;
+                    }
+                    
+                    this.similarityCache[cleanWord] = null;
+                    return null;
+                }
+
+                // Balance brackets, parentheses, and quotes to prevent orphan punctuation
+                balancePunctuation(text) {
+                    // Symmetrical quotes
+                    const symQuotes = ['"', '“', '”'];
+                    for (const q of symQuotes) {
+                        const count = (text.split(q).length - 1);
+                        if (count % 2 !== 0) {
+                            text += q;
+                        }
+                    }
+
+                    // Paired brackets
+                    const brackets = [['(', ')'], ['[', ']'], ['{', '}']];
+                    for (const [open, close] of brackets) {
+                        let openCount = 0;
+                        let closeCount = 0;
+                        for (let char of text) {
+                            if (char === open) openCount++;
+                            if (char === close) closeCount++;
+                        }
+                        if (openCount > closeCount) {
+                            text += close.repeat(openCount - closeCount);
+                        } else if (closeCount > openCount) {
+                            text = open.repeat(closeCount - openCount) + text;
+                        }
+                    }
+                    return text;
+                }
+
+                // Method to generate a single sentence
+                generateSentence() {
+                    if (this.beginnings.length === 0) {
+                        return "Not enough data to generate text. Try a smaller order value or provide more input.";
+                    }
+
+                    // Start with a random beginning
+                    const beginning = [...this.beginnings[Math.floor(Math.random() * this.beginnings.length)]];
+                    let result = [...beginning];
+
+                    const MAX_LENGTH = 30; // Max words per sentence
+                    let currentStateSize = Math.min(this.order, result.length);
+
+                    // Generate the rest of the sentence
+                    while (result.length < MAX_LENGTH) {
+                        const stateWords = result.slice(-currentStateSize);
+                        const state = stateWords.join(' ');
+
+                        let nextWord = null;
+                        let tempStateSize = currentStateSize;
+
+                        // 1. Try finding the next word with decreasing state sizes
+                        while (tempStateSize > 0 && !nextWord) {
+                            const tempState = result.slice(-tempStateSize).join(' ');
+                            if (this.models[tempStateSize] &&
+                                this.models[tempStateSize][tempState] &&
+                                this.models[tempStateSize][tempState].length > 0) {
+
+                                const possibleNextWords = this.models[tempStateSize][tempState];
+                                nextWord = possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+                                break; // Found a next word
+                            }
+                            tempStateSize--; // Try smaller state size
+                        }
+
+                        // 2. Semantic transition (Strategy 1): If we found a word, there's a 5% chance of a "semantic slip"
+                        // to keep the language flowing and add conceptual dreaminess.
+                        if (nextWord && Math.random() < 0.05 && result.length > 0) {
+                            const lastWord = result[result.length - 1];
+                            const similarWord = this.findSimilarWord(lastWord);
+                            if (similarWord && this.models[1] && this.models[1][similarWord]) {
+                                const possibleNextWords = this.models[1][similarWord];
+                                nextWord = possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+                            }
+                        }
+
+                        // 3. Fallback semantic transition: If we are stuck (nextWord is null), search for similar words 
+                        // to bridge the gap and continue generating.
+                        if (!nextWord && result.length > 0) {
+                            const lastWord = result[result.length - 1];
+                            const similarWord = this.findSimilarWord(lastWord);
+                            if (similarWord && this.models[1] && this.models[1][similarWord] && this.models[1][similarWord].length > 0) {
+                                const possibleNextWords = this.models[1][similarWord];
+                                nextWord = possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
+                            }
+                        }
+
+                        // If no continuation found (even with semantic similarity), end the sentence
+                        if (!nextWord) {
+                            break;
+                        }
+
+                        result.push(nextWord);
+
+                        // Randomly end sentence after a certain length, but avoid ending on weak words
+                        if (result.length > 5 && Math.random() < 0.12) {
+                            const lastWordClean = nextWord.toLocaleLowerCase('tr-TR').replace(/[^a-zğıüşöçâîû]/gi, '');
+                            if (!this.weakEndingWords.has(lastWordClean)) {
+                                break;
+                            }
+                        }
+                    }
+
+                    // Clean up: if sentence ended abruptly on a weak word, pop it off (unless it makes the sentence too short)
+                    while (result.length > this.order) {
+                        const lastWord = result[result.length - 1];
+                        const cleanWord = lastWord.toLocaleLowerCase('tr-TR').replace(/[^a-zğıüşöçâîû]/gi, '');
+                        if (this.weakEndingWords.has(cleanWord)) {
+                            result.pop();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // Format the sentence
+                    let sentence = result.join(' ').trim();
+                    sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1); // Capitalize
+                    if (!/[.!?]$/.test(sentence)) {
+                        sentence += '.'; // Add default punctuation if missing
+                    }
+
+                    sentence = this.balancePunctuation(sentence);
+
+                    return sentence;
+                }
+
+                // Method to generate multiple sentences
+                generateText(numSentences) {
+                    let result = "";
+                    for (let i = 0; i < numSentences; i++) {
+                        const sentence = this.generateSentence();
+                        result += sentence + " ";
+                        // Add paragraph breaks occasionally
+                        if (Math.random() < 0.36 && i < numSentences - 1) {
+                            result += "\n\n";
+                        }
+                    }
+                    return result.trim(); // Trim trailing space
+                }
+            }
+
+            // --- UI Interaction Script ---
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get references to UI elements
+                const globalThemeToggle = document.getElementById('globalThemeToggle');
+                const htmlElement = document.documentElement;
+                const navbarLogo = document.getElementById('navbarLogo'); // Get the logo image element
+                const generatorForm = document.getElementById('generatorForm');
+                const fileInput = document.getElementById('file');
+                const customTextInput = document.getElementById('customText');
+                const sentencesInput = document.getElementById('sentences');
+                const orderInput = document.getElementById('order');
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const resultDiv = document.getElementById('generatorResult');
+                const debugToggle = document.getElementById('debugToggle');
+                const debugInfoDiv = document.getElementById('debugInfo');
+
+                // Text Player references and state variables
+                const playerSection = document.getElementById('playerSection');
+                const playerDisplay = document.getElementById('playerDisplay');
+                const playerTrack = document.getElementById('playerTrack');
+                const playPauseBtn = document.getElementById('playPauseBtn');
+                const resetBtn = document.getElementById('resetBtn');
+                const speedSlider = document.getElementById('speedSlider');
+                const speedVal = document.getElementById('speedVal');
+                const fileStatus = document.getElementById('fileStatus');
+
+                let playerInterval = null;
+                let playerWords = [];
+                let playerIndex = 0;
+                let isPlaying = false;
+                let lastHighlightedIndex = -1;
+
+                // --- Global Theme Handling ---
+                const themeLocalStorageKey = 'page-theme';
+                const lightIcon = '☀️';
+                const darkIcon = '🌙';
+                const lightLogoSrc = '../assets/icons/logo.png'; // Path to light theme logo
+                const darkLogoSrc = '../assets/icons/logo_light.png'; // Path to dark theme logo
+
+                // Function to apply theme and update logo
+                const applyTheme = (theme) => {
+                    htmlElement.setAttribute('data-theme', theme);
+                    globalThemeToggle.textContent = theme === 'dark' ? lightIcon : darkIcon;
+
+                    // ** Update logo source based on theme **
+                    if (navbarLogo) { // Check if logo element exists
+                        navbarLogo.src = theme === 'dark' ? darkLogoSrc : lightLogoSrc;
+                    }
+
+                    localStorage.setItem(themeLocalStorageKey, theme);
+                };
+
+                // Apply saved theme on load or default based on system preference
+                const savedTheme = localStorage.getItem(themeLocalStorageKey);
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(savedTheme || (prefersDark ? 'dark' : 'light')); // Apply initial theme and logo
+
+                // Global Theme toggle event listener
+                globalThemeToggle.addEventListener('click', function() {
+                    const currentTheme = htmlElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    applyTheme(newTheme); // Apply new theme and update logo
+                });
+
+                // --- Debug Info Toggle ---
+                debugToggle.addEventListener('click', function() {
+                    const isHidden = debugInfoDiv.style.display === 'none' || debugInfoDiv.style.display === '';
+                    debugInfoDiv.style.display = isHidden ? 'block' : 'none';
+                    const lang = document.documentElement.lang || 'en';
+                    if (isHidden) {
+                        debugToggle.textContent = translations[lang]?.forgetting?.hideDebug || 'Hide Debug Info';
+                    } else {
+                        debugToggle.textContent = translations[lang]?.forgetting?.showDebug || 'Show Debug Info';
+                    }
+                });
+
+                // --- Helper: Decode ArrayBuffer to text (with Windows-1254 Turkish fallback) ---
+                function decodeBuffer(buffer) {
+                    try {
+                        const utf8Decoder = new TextDecoder('utf-8', { fatal: true });
+                        return utf8Decoder.decode(buffer);
+                    } catch (e) {
+                        console.log("UTF-8 decoding failed, falling back to Windows-1254 (Turkish ANSI).");
+                        const trDecoder = new TextDecoder('windows-1254');
+                        return trDecoder.decode(buffer);
+                    }
+                }
+
+                // --- Helper: Process and generate text ---
+                function processAndGenerate(text) {
+                    const numSentences = parseInt(sentencesInput.value, 10) || 100;
+                    const chainOrder = parseInt(orderInput.value, 10) || 2;
+
+                    // Use setTimeout to allow the UI to update (show loading) before heavy processing
+                    setTimeout(() => {
+                        try {
+                            if (!text || text.trim().length < 20) { // Basic validation
+                                throw new Error('Please provide more text (at least 20 characters) via file upload or the text area.');
+                            }
+
+                            // Instantiate the generator
+                            const generator = new SimpleMarkovGenerator(text, chainOrder);
+
+                            // Generate the text
+                            const generatedText = generator.generateText(numSentences);
+
+                            // Get and display debug info
+                            const debugInfo = generator.getDebugInfo();
+                            let debugText = `Input text: ${debugInfo.inputLength} characters\n`;
+                            debugText += `Sentences found: ${debugInfo.sentencesFound}\n`;
+                            debugText += `Valid sentences: ${debugInfo.validSentences}\n`;
+                            debugText += `Beginnings collected: ${debugInfo.beginningsCollected}\n`;
+                            debugText += `Model sizes: `;
+                            for (const [order, size] of Object.entries(debugInfo.modelSizes)) {
+                                debugText += `Order ${order}: ${size} states, `;
+                            }
+                            debugInfoDiv.innerHTML = debugText.trim().slice(0, -1); // Remove trailing comma and space
+
+                            // Display the result
+                            resultDiv.textContent = generatedText;
+                            resultDiv.style.display = 'block'; // Show result area
+
+                            // Initialize player text
+                            playerWords = generatedText.split(/\s+/).filter(w => w.length > 0);
+                            resetPlayer();
+                            playerSection.style.display = 'block';
+
+                        } catch (error) {
+                            console.error("Error during generation:", error);
+                            resultDiv.textContent = `Error: ${error.message}`; // Display error message
+                            resultDiv.style.display = 'block';
+                            debugInfoDiv.textContent = `Error occurred: ${error.message}\n${error.stack || ''}`; // Show error in debug
+                        } finally {
+                            loadingIndicator.style.display = 'none'; // Hide loading indicator
+                        }
+                    }, 10); // Small delay
+                }
+
+                // --- Helper: Automatically generate text from default file ---
+                function autoGenerateDefaultText() {
+                    const defaultTextPath = '../assets/texts/bekleyis_unutus.txt';
+                    const fallbackPath = 'assets/texts/bekleyis_unutus.txt';
+
+                    // Show loading, hide previous results/errors
+                    loadingIndicator.style.display = 'block';
+                    resultDiv.style.display = 'none';
+                    resultDiv.textContent = '';
+                    debugInfoDiv.textContent = '';
+                    debugInfoDiv.style.display = 'none';
+                    
+                    const lang = document.documentElement.lang || 'en';
+                    debugToggle.textContent = translations[lang]?.forgetting?.showDebug || 'Show Debug Info';
+
+                    console.log("Fetching default text:", defaultTextPath);
+
+                    const fallbackText = `Ona sorular sorduğunu hatırlamıyordu ama bu onu haklı çıkarmıyordu; kendi sessizliğiyle, beklentisiyle, kadına vermiş olduğu işaretlerle onu daha da sıkıştıran bir tarzda sorulara maruz bırakmıştı. Onu hakikati fazlasıyla açık bir biçimde söylemeye itmişti; doğrudan, yatıştırılmış, dönüşü olmayan bir hakikatti bu.
+Fakat kadın neden onunla konuşmuştu? Eğer bunu sorgulamaya başlarsa devam edemeyecekti. Fakat bu, aynı zamanda son derece belirleyiciydi. Doğru nedeni bulamadığı sürece, şimdi duymuş olduğundan şüphe etmediği şeyleri kadının ona gerçekten söylediğinden asla emin olamayacaktı.
+Bu inancı onun mevcudiyetine, kelimelerin fısıltısına borçluydu: sözler havada uçuşmaya devam ediyordu. Fakat ya daha sonra? Daha sonrasını dert etmemeliydi, başka bir zaman için herhangi bir güvence aramıyordu. Kadını özgür bırakacaktı. Belki de onu başka sırları ifşa etmeye zorlamak istemiyordu, belki de tam tersine gizli arzusu onu bu eğilimde tutmaktı.
+Bu, çekici gelmekle beraber, aynı zamanda onda bir huzursuzluğa da sebep oluyordu. Kendisinin art düşünceleri olduğunu keşfetti. Bu art düşünceler, kendisi farkında olmadan, onca eminlikle yazmış olduklarını saptırmamış mıydı? Hayır, diyordu kendine. Kadının onca umutsuzlukla onun karşısına koyduğu bu inkârı düşünürken bulanık bir umutsuzluk duyuyordu.
+Sadık olmak, işte kendisinden istenilen buydu: kendisine has kıvrımlarla kadının gözden kaybolacağı ve kendisini tek başına bırakacağı yere kadar ona eşlik edecek biraz soğuk bu eli tutmak. Fakat bu elin kime ait olduğunu soruşturmamak onun için oldukça zordu. Her zaman böyle olmuştu. Kat edilecek olanı değil de kendisine uzanmış olan bu eli düşünüyordu. Hata, hiç kuşkusuz buradaydı.
+Kâğıtları bir araya getirirken bu başarısızlıkla ona bağlanmış olduğunu hissetmekten kendini alamadı. Tam olarak neden olduğunu anlayamıyordu. Sanki kadına boşluğun içinden dokunmuş, onu bir an için görmüştü. Ne zaman? Az önce. Onun kim olduğunu görmüştü.
+Bu, kendisini cesaretlendirmek şöyle dursun, her şeye son noktayı koyuyordu. Peki öyle olsun, diye söylendi, eğer istemiyorsan vazgeçiyorum. Vazgeçiyordu fakat, doğrusu, bunu ne ona ne de sırrına doğrudan hitap eden içten sözlerle yapıyordu. Kendisine daha tanıdık gelen, bildiği ve onu sanki neşeli bir özgürlük içinde yaşatmış olan başka bir şeyi hedeflemişti.
+Belki de bunun kadının sesi olduğunun farkına varmıştı şaşkınlıkla. Kendisine emanet edilen işte bu sesti. Kağıtları yeniden eline aldı ve yazdı: Sana emanet edilen sestir, kadının söylediği değil. Kadının söylediklerini, senin derlediğin ve haklarını vermek için kaydettiğin sırları, ne kadar çekici olurlarsa olsunlar, nazik bir şekilde en başta onları içinden çıkardığın sessizliğe doğru taşımalısın. Kadın ona şu an ne yazdığını sordu. Fakat bu kadının duymaması gereken, birlikte işitmemeleri gereken bir şeydi.
+Kadın belki konuşuyordu ama ifadesinde söylediklerine dair en ufak bir teveccüh, konuşmaya en ufak bir rıza yoktu; sadece, güç bela hayatta olduğu izlenimi veren bir teyit, belli belirsiz bir acı mevcuttu. Kadına şunu söyleme hakkına sahip olmayı isterdi: Seni duymamı istiyorsan konuşmayı bırak. Fakat kadın, hiçbir şey söylemezken bile susamazdı artık.
+Belki de kadının her şeyi unuttuğunun iyice farkına varmıştı. Bundan rahatsızlık duymuyordu. Onun, bildiklerini hatırlamaktan ziyade unutarak zapt etmek arzusunda olup olmadığını soruyor veya onunla birlikte bu odaya girip beklemeyi tercih ediyordu. Fakat unutuş... O halde kendisinin de unutuşa düşmesi gerekiyordu.
+Neden beni böyle dinliyorsunuz? Hatta konuşurken bile neden dinlemeye devam ediyorsunuz? Neden, sonrasında söylemek zorunda olduğum bu söze beni itiyorsunuz? Ve hiçbir cevap vermiyorsunuz; kendiniz hakkında hiçbir şey söylemiyorsunuz. Fakat ben de ağzımı açmayacağım, haberiniz olsun. Söylemediklerimin hiçbir önemi yok.
+Kadının istediği, hiç şüphesiz, adamın, kendisinin söylediklerini tekrar etmesi, sadece tekrar etmesiydi. Fakat hiçbir zaman benim sözlerimde kendininkileri tanıyamıyordu. Farkında olmadan bir şeyleri mi değiştiriyordum acaba? Ondan bana gelirken sözlerde bir şeyler değişiyor vardı.
+Kendi kendisi için alçak sesle, onun için daha alçak sesle. Duyulmadan evvel tekrar edilmesi gereken söz, takip ettiği izsiz mırıltı, bir yok-yerde başıboş gezinen, her yerde ikamet eden, akışa bırakmanın zorunluluğu. Her defasında, hiç konuşmadan yeniden burada olmak isteyen hep bu eski söz.
+Her ne kadar bu olanlar karşısında hakikat kelimesini kullanamasa da bu bir kurmaca değildi. Başına bir şey gelmişti ve ne bunun doğru olduğunu ne de karşıtını söyleyebiliyordu. Daha sonra, olayın özgüllüğünün bu ne doğru ne de yanlış oluşta olduğunu düşündü.
+Zavallı oda, sende hiç ikamet edildi mi? Ne kadar da soğuk burası, ne kadar da az yaşıyorum burada. Sadece ikametimin tüm izlerini silmek için kalmıyor muyum burada? Yeniden, yeniden, yürüyerek ve her daim yerleşik olarak, bir başka ülke, başka şehirler, başka yollar, aynı diyar.
+Sıklıkla onun konuştuğu hissine kapılıyordu fakat kadın henüz konuşmuyordu. Bu yüzden adam bekliyordu. Bekleyişin büyük hareketli çemberindeydi, kadınla birlikte kapatılmış halde.
+Öyle bir şey yap ki seninle konuşabileyim. Evet ama bunun için ne yapmam gerektiği konusunda bir fikriniz var mı? Duyduğunuza ikna edin beni. O halde başla, konuş benimle. Eğer beni duymuyorsanız nasıl başlayabilirim konuşmaya? Bilmiyorum. Seni duyduğumu sanıyorum. Senli benli konuşmanın sebebi ne? Hiç kimseye senli benli hitap etmezsiniz. İşte sana hitap ettiğimin kanıtı. Sizden konuşmanızı değil duymanızı, sadece duymanızı rica ediyorum. Seni duymamı mı, yoksa genel olarak duymamı mı? Hayır, beni değil, anladınız işte. Duymak, sadece duymak. Öyleyse konuştuğunda konuşan sen olmayacaksın.
+Kadının onunla giriştiği bir çeşit mücadeleydi, ondan bir cevap beklediği ve kendi gerekçesini sunduğu sessiz bir münakaşa.`;
+
+                    fetch(defaultTextPath)
+                        .then(response => {
+                            if (!response.ok) {
+                                console.log("First path failed, trying fallback:", fallbackPath);
+                                return fetch(fallbackPath);
+                            }
+                            return response;
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status} - Could not load default text file.`);
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(buffer => {
+                            const text = decodeBuffer(buffer);
+                            processAndGenerate(text);
+                        })
+                        .catch(error => {
+                            console.error("Error fetching default text, using embedded fallback:", error);
+                            processAndGenerate(fallbackText);
+                        });
+                }
+
+                // --- Form Submission Handler ---
+                generatorForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent default form submission
+
+                    // Get user inputs
+                    const customText = customTextInput.value.trim();
+                    const file = fileInput.files && fileInput.files.length > 0 ? fileInput.files[0] : null;
+
+                    // Show loading, hide previous results/errors
+                    loadingIndicator.style.display = 'block';
+                    resultDiv.style.display = 'none';
+                    resultDiv.textContent = '';
+                    debugInfoDiv.textContent = '';
+                    debugInfoDiv.style.display = 'none'; // Hide debug info initially
+                    debugToggle.textContent = 'Show Debug Info'; // Reset toggle button text
+
+                    if (customText.length > 0) {
+                        console.log("Using text from text area.");
+                        processAndGenerate(customText);
+                    } else if (file) {
+                        console.log("Using uploaded file:", file.name);
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            try {
+                                const text = decodeBuffer(event.target.result);
+                                processAndGenerate(text);
+                            } catch (error) {
+                                console.error("Error decoding file:", error);
+                                resultDiv.textContent = 'Error decoding the file: ' + error.message;
+                                resultDiv.style.display = 'block';
+                                loadingIndicator.style.display = 'none';
+                            }
+                        };
+                        reader.onerror = function(event) {
+                            console.error("File reading error:", event);
+                            resultDiv.textContent = 'Error reading the uploaded file.';
+                            resultDiv.style.display = 'block';
+                            loadingIndicator.style.display = 'none';
+                        };
+                        reader.readAsArrayBuffer(file); // Read as array buffer to allow dynamic decoding
+                    } else {
+                        // Fallback to auto-generating default text
+                        autoGenerateDefaultText();
+                    }
+                });
+
+                // --- Perpetual Forgetting Text Player Controls ---
+                
+                // Update speed indicator
+                speedSlider.addEventListener('input', function() {
+                    speedVal.textContent = speedSlider.value + 'ms';
+                    if (isPlaying) {
+                        pausePlayer();
+                        playPlayer();
+                    }
+                });
+
+                function playPlayer() {
+                    if (playerWords.length === 0) return;
+                    isPlaying = true;
+                    updatePlayerButtons();
+                    playerInterval = setInterval(tickPlayerVisual, parseInt(speedSlider.value, 10));
+                }
+
+                function pausePlayer() {
+                    isPlaying = false;
+                    updatePlayerButtons();
+                    if (playerInterval) {
+                        clearInterval(playerInterval);
+                        playerInterval = null;
+                    }
+                }
+
+                function tickPlayerVisual() {
+                    if (playerIndex >= playerWords.length) {
+                        pausePlayer();
+                        return;
+                    }
+                    highlightWord(playerIndex);
+                    playerIndex++;
+                }
+
+                function highlightWord(wordIndex) {
+                    if (wordIndex < 0 || wordIndex >= playerWords.length) return;
+                    
+                    playerIndex = wordIndex; // Keep sync
+                    
+                    const spans = playerTrack.children;
+                    const len = spans.length;
+                    
+                    const setWordClass = (idx, dist) => {
+                        if (idx < 0 || idx >= len) return;
+                        const s = spans[idx];
+                        s.className = 'player-word';
+                        if (dist === 0) {
+                            s.classList.add('word-current');
+                        } else if (dist === 1) {
+                            s.classList.add('word-trail-1');
+                        } else if (dist === 2) {
+                            s.classList.add('word-trail-2');
+                        } else if (dist === 3) {
+                            s.classList.add('word-trail-3');
+                        } else if (dist === 4) {
+                            s.classList.add('word-trail-4');
+                        } else if (dist === 5) {
+                            s.classList.add('word-trail-5');
+                        } else if (dist > 5) {
+                            s.classList.add('word-faded');
+                        } else {
+                            s.classList.add('word-future');
+                        }
+                    };
+
+                    if (lastHighlightedIndex !== -1 && wordIndex === lastHighlightedIndex + 1) {
+                        for (let d = 0; d <= 6; d++) {
+                            setWordClass(wordIndex - d, d);
+                        }
+                    } else {
+                        for (let i = 0; i < len; i++) {
+                            const distFromCurrent = wordIndex - i;
+                            setWordClass(i, distFromCurrent);
+                        }
+                    }
+                    
+                    lastHighlightedIndex = wordIndex;
+                    
+                    const activeSpan = spans[wordIndex];
+                    if (activeSpan) {
+                        const displayWidth = playerDisplay.offsetWidth;
+                        const centerPoint = displayWidth / 2;
+                        const wordLeft = activeSpan.offsetLeft;
+                        const translateX = centerPoint - wordLeft;
+                        playerTrack.style.transform = `translateX(${translateX}px)`;
+                    }
+                }
+
+                function getWordIndexAtCharIndex(sentence, charIndex) {
+                    const substring = sentence.substring(0, charIndex);
+                    const words = substring.trim().split(/\s+/).filter(w => w.length > 0);
+                    return words.length;
+                }
+
+                function resetPlayer() {
+                    pausePlayer();
+                    playerIndex = 0;
+                    lastHighlightedIndex = -1;
+                    playerTrack.textContent = '';
+                    playerTrack.style.transform = 'translateX(0px)';
+                    
+                    playerWords.forEach(word => {
+                        const span = document.createElement('span');
+                        span.className = 'player-word word-future';
+                        span.textContent = word;
+                        playerTrack.appendChild(span);
+                    });
+                }
+
+                function updatePlayerButtons() {
+                    const lang = document.documentElement.lang || 'en';
+                    
+                    const playText = translations[lang]?.forgetting?.play || '▶ Play';
+                    const pauseText = translations[lang]?.forgetting?.pause || '⏸ Pause';
+                    playPauseBtn.textContent = isPlaying ? pauseText : playText;
+                    
+                    const resetText = translations[lang]?.forgetting?.reset || '↺ Reset';
+                    resetBtn.textContent = resetText;
+                    
+                    const speedLabel = document.querySelector('.speed-control label');
+                    if (speedLabel) {
+                        speedLabel.textContent = translations[lang]?.forgetting?.speed || 'Interval:';
+                    }
+
+                    const isDebugVisible = debugInfoDiv.style.display === 'block';
+                    if (isDebugVisible) {
+                        debugToggle.textContent = translations[lang]?.forgetting?.hideDebug || 'Hide Debug Info';
+                    } else {
+                        debugToggle.textContent = translations[lang]?.forgetting?.showDebug || 'Show Debug Info';
+                    }
+
+                    updateFileStatusLabel();
+                }
+
+                // Update file status label
+                function updateFileStatusLabel() {
+                    if (!fileStatus) return;
+                    const lang = document.documentElement.lang || 'en';
+                    if (fileInput.files && fileInput.files.length > 0) {
+                        const template = translations[lang]?.forgetting?.customFileActive || '[Selected: {file}]';
+                        fileStatus.textContent = template.replace('{file}', fileInput.files[0].name);
+                    } else {
+                        fileStatus.textContent = translations[lang]?.forgetting?.defaultFileActive || '[Default: bekleyis_unutus.txt]';
+                    }
+                }
+
+                playPauseBtn.addEventListener('click', function() {
+                    if (isPlaying) {
+                        pausePlayer();
+                    } else {
+                        playPlayer();
+                    }
+                });
+
+                resetBtn.addEventListener('click', resetPlayer);
+
+                // Update file status label on upload
+                fileInput.addEventListener('change', updateFileStatusLabel);
+
+                // Update text player labels on language switches
+                document.querySelectorAll('.language-switcher button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        setTimeout(updatePlayerButtons, 50);
+                    });
+                });
+                
+                // Initial translation sync
+                setTimeout(updatePlayerButtons, 100);
+
+                // Automatically generate text from the default file on page load
+                autoGenerateDefaultText();
+            });
+        </script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VisualArtwork",
+            "name": "Perpetual Forgetting",
+            "creator": {
+                "@type": "Person",
+                "name": "Yusuf Özcan",
+                "sameAs": "https://www.instagram.com/yusufz.ozcan"
+            },
+            "dateCreated": "2023",
+            "artform": "Digital installation, generative text",
+            "description": "A generative text work exploring Maurice Blanchot's concepts through Markov chains and algorithmic text generation.",
+            "image": "https://yusufozcan.info/assets/detail-pics/project-7-forgetting-01.jpg",
+            "genre": ["Digital Art", "Algorithm Art", "Conceptual Art", "Interactive Art"]
+        }
+        </script>
+    </body>
+</html>

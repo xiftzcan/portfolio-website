@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <meta name="title" content="One and Three Flags - The Limits of My World (2024) - Real-time Computer Graphics">
+    <meta name="description"
+        content="A computational art project translating the Turkish Flag Law specifications into GLSL code, exploring the relationship between national symbols, legal codification, and digital materiality.">
+    <meta name="keywords"
+        content="computational art, GLSL, digital materiality, flag symbolism, national identity, code as medium, symbolic representation, generative graphics">
+    <meta name="author" content="Yusuf Özcan">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="artwork">
+    <meta property="og:title" content="One and Three Flags - The Limits of My World (2024)">
+    <meta property="og:description"
+        content="Real-time computer graphics work translating legal flag specifications into code, examining how national symbols bridge material and virtual realms.">
+    <meta property="og:image" content="https://yusufozcan.info/assets/detail-pics/project-5-virtual-01.jpg">
+    <meta property="og:url" content="https://yusufozcan.info/projects/bir_ve_uc_bayrak.html">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="One and Three Flags - The Limits of My World (2024)">
+    <meta name="twitter:description"
+        content="Computational art exploring national identity through translating flag law into programming language, investigating representation in digital space.">
+    <meta name="twitter:image" content="https://yusufozcan.info/assets/detail-pics/project-5-virtual-01.jpg">
+
+    <title>One and Three Flags (2024) | Yusuf Özcan</title>
+    <link rel="canonical" href="https://yusufozcan.info/projects/bir_ve_uc_bayrak.html">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/project.css">
+    <link rel="icon" type="image/svg" href="../assets/icons/fav_icon.svg">
+
+    <style>
+        /* Media Player Style Container */
+        .webgl-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            overflow: hidden;
+            background-color: #000;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow var(--transition-speed);
+        }
+
+        [data-theme="dark"] .webgl-container {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .webgl-canvas {
+            display: block;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            /* 16:9 aspect ratio */
+            position: relative;
+            background-color: #000;
+        }
+
+        #glCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: move;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .play-button,
+        .fullscreen-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .fullscreen-button {
+            font-size: 1rem;
+        }
+
+        .info-text {
+            color: white;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* Style for fullscreen mode */
+        .webgl-container.fullscreen {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999;
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .webgl-container.fullscreen .webgl-canvas {
+            padding-bottom: 0;
+            height: calc(100vh - 50px);
+        }
+
+        .exit-fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10000;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .exit-fullscreen-overlay.visible {
+            display: block;
+        }
+
+        /* Code Display Section */
+        .code-section {
+            margin: 3rem auto;
+            max-width: 1000px;
+        }
+
+        .code-container {
+            background-color: var(--code-bg-light);
+            border: 1px solid var(--code-border-light);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            transition: background-color var(--transition-speed),
+                border-color var(--transition-speed);
+        }
+
+        [data-theme="dark"] .code-container {
+            background-color: var(--code-bg-dark);
+            border-color: var(--code-border-dark);
+        }
+
+        .code-container pre {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-color);
+            white-space: pre-wrap;
+            transition: color var(--transition-speed);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .code-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: color var(--transition-speed);
+        }
+
+        .code-info {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            transition: color var(--transition-speed);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav id="navbar">
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="../assets/icons/logo.png" alt="Yusuf Özcan - Multimedia Artist Logo" id="navbarLogo">
+                </a>
+            </div>
+            <button id="hamburger" class="hamburger" aria-label="Toggle navigation">☰</button>
+            <ul class="nav-links">
+                <li><a href="../index.html" data-translate="home">Home</a></li>
+                <li><a href="../about.html" data-translate="about">About</a></li>
+                <li><a href="../works.html" data-translate="work">Work</a></li>
+                <li><a href="../blog.html" data-translate="blog">Blog</a></li>
+                <li><a href="../contact.html" data-translate="contact">Contact</a></li>
+            </ul>
+            <div class="language-switcher">
+                <button onclick="changeLanguage('en')">EN</button>
+                <button onclick="changeLanguage('tr')">TR</button>
+                <button id="globalThemeToggle" class="theme-toggle-button" aria-label="Toggle theme">
+                    ☀️ </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="project-container">
+        <article class="project-content">
+            <h1 class="project-title" data-translate="flag-II.title">One and Three Flags, 2024 (ongoing)</h1>
+
+            <!-- WebGL Animation in Media Player Style Container -->
+            <div class="webgl-container" id="webglContainer">
+                <div class="webgl-canvas">
+                    <canvas id="glCanvas"></canvas>
+                </div>
+                <div class="player-controls">
+                    <div class="control-buttons">
+                        <button class="play-button" id="playPauseBtn" title="Play">▶️</button>
+                        <button class="fullscreen-button" id="fullscreenBtn" title="Fullscreen">⛶</button>
+                    </div>
+                    <div class="info-text">WebGL Animation • Interactive • Click and drag to rotate view</div>
+                </div>
+            </div>
+
+            <div class="project-description">
+                <p data-translate="flag-II.description">This ongoing project continues my exploration of flag symbolism
+                    as a volatile form. Using WebGL and fragment shaders, I create a digital representation of the
+                    Turkish flag that responds to both programmatic animation and user interaction. The flag exists in a
+                    liminal space between the digital and physical, reflecting on how national symbols transform in
+                    virtual environments.</p>
+                <p>The animation uses physically-based rendering techniques to simulate fabric properties, wind
+                    dynamics, and environmental lighting. By transforming a static national symbol into a dynamic,
+                    interactive digital artifact, the work investigates how our relationship with cultural symbols
+                    changes as they migrate into digital spaces.</p>
+                <p>This piece serves as a digital extension of my earlier work "Flag as a Volatile Form" (2019),
+                    continuing to examine how meaning is constructed, preserved, and transformed through digitization
+                    and algorithmic representation.</p>
+            </div>
+
+            <!-- Code Display Section -->
+            <div class="code-section">
+                <div class="code-header">
+                    <span class="code-title">WebGL Fragment Shader Code</span>
+                    <span class="code-info">GLSL • Read-only</span>
+                </div>
+                <div class="code-container">
+                    <pre id="shaderCode">
+// WebGL Fragment Shader for Turkish Flag Animation (Optimized & Detailed)
+// Created by Yusuf Özcan, 2024-2026
+#extension GL_OES_standard_derivatives : enable
+precision highp float;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform vec4 iMouse;
+uniform sampler2D iChannel0;
+
+const float tau = 6.28318530717958647692;
+
+vec2 gFragCoord;
+
+// Common utility functions
+vec3 toNormalizedRGB(float r, float g, float b) {
+    return vec3(r/255.0, g/255.0, b/255.0);
+}
+
+// Flag colors - Turkish flag - exact official colors
+const vec3 FLAG_RED = vec3(227.0/255.0, 10.0/255.0, 23.0/255.0);
+const vec3 FLAG_WHITE = vec3(1.0, 1.0, 1.0);
+
+// Tone Mapping - optimized for better performance
+const float exposure = 1.0;
+const vec3 gradient = vec3(1.4,1.5,1.6);
+const vec3 whiteSoftness = vec3(.1);
+const vec3 blackClip = vec3(.0);
+const vec3 blackSoftness = vec3(.05);
+
+vec3 LinearToSRGB(vec3 col) {
+    return mix(col*12.92, 1.055*pow(col,vec3(1./2.4))-.055, step(.0031308,col));
+}
+
+vec3 HDRtoLDR(vec3 col) {
+    col *= exposure;
+    col = max(col-blackClip,0.);
+    col = sqrt(col*col+blackSoftness*blackSoftness)-blackSoftness;
+    col *= gradient;
+    vec3 w2 = whiteSoftness*whiteSoftness;
+    col += w2;
+    col = (1.-col)*.5;
+    col = 1. - (sqrt(col*col+w2) + col);
+    return LinearToSRGB(col);
+}
+
+float linstep(float a, float b, float c) {
+    return clamp((c-a)/(b-a),0.,1.);
+}
+
+// Set up a camera looking at the scene.
+void CamPolar(out vec3 pos, out vec3 ray, in vec3 origin, in vec2 rotation, in float distance, in float zoom) {
+    // get rotation coefficients
+    vec2 c = vec2(cos(rotation.x),cos(rotation.y));
+    vec4 s;
+    s.xy = vec2(sin(rotation.x),sin(rotation.y));
+    s.zw = -s.xy;
+    
+    // ray in view space
+    ray.xy = gFragCoord.xy - iResolution.xy*.5;
+    ray.z = iResolution.y*zoom;
+    ray = normalize(ray);
+    
+    // rotate ray
+    ray.yz = ray.yz*c.xx + ray.zy*s.zx;
+    ray.xz = ray.xz*c.yy + ray.zx*s.yw;
+    
+    // position camera
+    pos = origin - distance*vec3(c.x*s.y,s.z,c.x*c.y);
+}
+
+// Pre-computed orthogonal rotation basis matrix for cyclicNoise (reduces CPU/GPU overhead)
+const mat3 rotMatrix = mat3(
+    vec3(0.4472136, 0.0, 0.8944272),
+    vec3(-0.7807200, 0.4879500, 0.3903600),
+    vec3(-0.4364358, -0.8728716, 0.2182179)
+);
+
+// Cyclic Noise algorithm (originally by nimitz) for smooth organic fabric folds
+float cyclicNoise(vec3 p, float time) {
+    float noise = 0.0;
+    float amp = 1.0;
+    const float gain = 0.55;
+    const float lacunarity = 1.4;
+    
+    const float warp = 0.45;    
+    float warpTrk = 1.4;
+    const float warpTrkGain = 1.25;
+    
+    for (int i = 0; i < 4; i++) {
+        // Domain warping
+        p += sin((p.zxy + vec3(-sin(time)*0.1, time*0.25, time*0.4)) * warpTrk - 2.0 * warpTrk) * warp; 
+        
+        // Sine wave noise calculation
+        float f = sin(dot(cos(p), sin(p.zyx)));
+        noise += f * amp;
+        
+        // Rotate and scale
+        p *= rotMatrix;
+        p *= lacunarity;
+        
+        warpTrk *= warpTrkGain;
+        amp *= gain;
+    }
+    
+    return (noise * 0.25 + 0.5);
+}
+
+// Noise function for clouds - optimized skewing matrix
+vec4 Noise(in vec2 x) {
+    x = mat2(0.86602540378, -0.5, 0.5, 0.86602540378) * x;
+    vec2 p = floor(x);
+    vec2 f = fract(x);
+    f = f*f*(3.0-2.0*f);
+    vec2 uv = (p + f)/256.0;
+    return texture2D(iChannel0, uv);
+}
+
+// Star shape for Turkish flag
+float sdStar5(in vec2 p, in float r, in float rf) {
+    float angle = 3.141592653589793 / 10.0;
+    float c = cos(angle);
+    float s = sin(angle);
+    p = mat2(c, -s, s, c) * p;
+    
+    const vec2 k1 = vec2(0.809016994375, -0.587785252292);
+    const vec2 k2 = vec2(-k1.x, k1.y);
+    p.x = abs(p.x);
+    p -= 2.0*max(dot(k1,p), 0.0)*k1;
+    p -= 2.0*max(dot(k2,p), 0.0)*k2;
+    p.x = abs(p.x);
+    p.y -= r;
+    vec2 ba = rf*vec2(-k1.y, k1.x) - vec2(0,1);
+    float h = clamp(dot(p,ba)/dot(ba,ba), 0.0, r);
+    return length(p-ba*h) * sign(p.y*ba.x-p.x*ba.y);
+}
+
+// Water ripple effect - shifts noise horizontally over time to propagate folds from left to right
+float RippleHeight(vec2 pos) {
+    // Monotonic phase function: prevents waves from slowing to a halt or moving backward.
+    // By keeping the derivative of the phase offset strictly positive, waves always travel forward.
+    float time = iTime * 1.8 + sin(iTime * 0.5) * 0.5 + cos(iTime * 0.23) * 0.4;
+    
+    // Moving frame of reference (left to right propagation)
+    float travelX = pos.x - time * 1.2;
+    vec2 wavePos = vec2(travelX * 1.4, pos.y * 1.5);
+    
+    // Apply a slight diagonal angle (15 degrees rotation) for natural folds
+    wavePos = mat2(0.966, -0.259, 0.259, 0.966) * wavePos;
+    
+    // Slow-evolving time for gentle morphing of waves as they travel
+    float slowTime = time * 0.08;
+    float n = cyclicNoise(vec3(wavePos, slowTime), slowTime);
+    float f = n - 0.5;
+    
+    // Damping near the flagpole (x = 0)
+    f = f * (1.0 - exp2(-abs(pos.x) * 1.5));
+    return f * 0.95;
+}
+
+// Distance field for flag surface - optimized
+float DistanceField(vec3 pos) {
+    return (RippleHeight(pos.xy)-pos.z)*.5;
+}
+
+// Calculate normal of flag surface using heightfield gradient (only 3 calls to RippleHeight)
+vec3 Normal(vec3 pos) {
+    vec2 e = vec2(0.02, 0.0);
+    float h = RippleHeight(pos.xy);
+    float hx = RippleHeight(pos.xy + e.xy);
+    float hy = RippleHeight(pos.xy + e.yx);
+    return normalize(vec3(hx - h, hy - h, -e.x));
+}
+
+// Map UV coordinates onto distorted flag with improved performance
+vec2 UVMapping(vec2 target) {
+    // bow the left edge so it's just mounted at 2 points
+    float bow = cos(target.y*6.283185/4.)*.1;
+    target.x -= bow;
+    
+    float droop = 0.8;
+    target.y += droop;
+    
+    vec2 uv = vec2(0);
+    
+    const int n = 4; // Optimized integration steps
+    vec2 d = target/float(n);
+    vec2 l;
+    l.x = RippleHeight(vec2(0,target.y));
+    l.y = RippleHeight(vec2(target.x,0));
+    
+    for (int i=0; i < n; i++) {
+        vec2 s;
+        s.x = RippleHeight(vec2(d.x*float(i),target.y));
+        s.y = RippleHeight(vec2(target.x,d.y*float(i)));
+        
+        uv += sign(d)*sqrt(pow(s-l,vec2(2.0))+d*d);
+        l = s;
+    }
+    
+    uv.y -= droop;
+    
+    return (uv+vec2(0,1))/vec2(3.0,2.0);
+}
+
+// Turkish flag pattern - using exact specifications from reference file
+vec3 TurkishFlag(vec2 uv) {
+    // Set the flag aspect ratio to 1.5:1 (width:height) as per Turkish standards
+    vec2 flagSize = vec2(1.5, 1.0);
+    vec2 center = vec2(0.5 * flagSize.x, 0.5 * flagSize.y);
+    
+    // Background - Official Turkish flag red
+    vec3 rectangleColor = toNormalizedRGB(227.0, 10.0, 23.0);
+    vec3 circleColor = FLAG_WHITE;
+    
+    // Create flag with exact dimensions from reference file
+    float firstCircleRadius = flagSize.y * 0.25; // Moon outer radius
+    vec2 firstCirclePos = vec2(center.x - 0.250, center.y);
+    
+    float secondCircleRadius = flagSize.y * 0.20; // Moon inner radius
+    vec2 secondCirclePos = vec2(center.x - 0.1875, center.y);
+    
+    // Calculate moon crescent with precise values from reference
+    float outerDist = length(uv * flagSize - firstCirclePos) - firstCircleRadius;
+    float innerDist = length(uv * flagSize - secondCirclePos) - secondCircleRadius;
+    
+    // Improve anti-aliasing for sharper edges
+    float crescentEdge = smoothstep(-0.001, 0.001, outerDist);
+    float crescentHole = smoothstep(-0.001, 0.001, innerDist);
+    
+    // Star positioning based on exact reference coordinates
+    vec2 starCenterPos = vec2(center.x + 0.0708333333333, center.y);
+    float starRadius = flagSize.y * 0.125; // Star size
+    float starInnerRadius = 0.38; // Inner radius ratio
+    
+    // Calculate star shape using the reference SDF function
+    float starDist = sdStar5((uv * flagSize) - starCenterPos, starRadius, starInnerRadius);
+    float starEdge = smoothstep(-0.001, 0.001, starDist);
+    
+    // Combine elements with correct layering
+    vec3 color = rectangleColor;
+    
+    // Apply moon crescent - white where outer circle is visible but inner circle is not
+    if (crescentEdge < 1.0) {
+        color = mix(color, circleColor, 1.0 - crescentEdge);
+    }
+    
+    if (crescentHole < 1.0) {
+        color = mix(color, rectangleColor, 1.0 - crescentHole);
+    }
+    
+    // Apply star - white where star is visible
+    if (starEdge < 1.0) {
+        color = mix(color, circleColor, 1.0 - starEdge);
+    }
+    
+    return color;
+}
+
+// Flag boundary mask
+float Mask(vec2 uv) {
+    float xMask = (uv.x < 0.01 || uv.x > 0.99) ? 1.0 : 0.0;
+    float yMask = (uv.y < 0.01 || uv.y > 0.99) ? 1.0 : 0.0;
+    return max(xMask, yMask);
+}
+
+// Checks if a point is within flag bounds
+bool isInFlag(vec2 uv) {
+    return (uv.x >= -0.001 && uv.x <= 1.001 && uv.y >= -0.001 && uv.y <= 1.001);
+}
+
+// Fabric weave texture - optimized for performance
+float Weave(vec2 uv) {
+    vec2 a = uv*vec2(3.0,2.0)*300.0;
+    float f = (sin(a.x)+sin(a.y))*.25+.5;
+    f = mix(f, .5, min(1., .2*max(fwidth(a.x), fwidth(a.y))));
+    return f;
+}
+
+// Seam around flag edge
+float Seam(vec2 uv) {
+    return smoothstep(.5, .48, abs(uv.y-.5))
+        * smoothstep(1., .985, uv.x)
+        * smoothstep(.02, .03, uv.x);
+}
+
+// Sky color with improved gradient and horizon
+vec3 airColourLog2 = vec3(.07,.2,.4);
+const vec3 lightDir = normalize(vec3(-3,.7,-.6));
+
+vec3 SkyColour(vec3 ray) {
+    vec3 col = exp2(-ray.y/airColourLog2);
+    
+    // Clouds
+    vec2 cloudUV = ray.xz/(ray.y+.1) + iTime*vec2(-.02,0);
+    
+    // Cloud noise uses the cheaper 2D Noise
+    float cloudDetail1 = Noise(2.*cloudUV).x;
+    float cloudDetail2 = Noise(4.*cloudUV).x * 0.5;
+    float cloudDetail3 = Noise(8.*cloudUV).x * 0.25;
+    float cloudDetail4 = Noise(16.*cloudUV).x * 0.125;
+    
+    float cloudValue = (cloudDetail1 + cloudDetail2 + cloudDetail3 + cloudDetail4) / 1.875;
+    float cloudDensity = smoothstep(0.4, 0.6, cloudValue);
+    col = mix(col, vec3(0.95, 0.95, 1.0), cloudDensity * max(0., ray.y) * 0.8);
+    
+    vec3 darkGreenEarthTone = vec3(0.0, 0.01, 0.0);
+    
+    float horizonSDF = ray.y - .05 - .04*Noise(ray.xz*12.).x;
+    col = mix(col, darkGreenEarthTone, smoothstep(.002, -.002, horizonSDF));
+    
+    vec3 oppLightDir = -lightDir;
+    float dotProduct = dot(normalize(ray.xz), normalize(oppLightDir.xz));
+    float brightnessFactor = smoothstep(-0.5, 1.0, dotProduct) * 0.3;
+    col = mix(col, vec3(0.7, 0.8, 1.0), brightnessFactor * max(0.0, ray.y * 4.0));
+    
+    return col;
+}
+
+vec3 Ambient(vec3 normal) {
+    return mix(vec3(.1,.07,.05), vec3(.15,.2,.25), normal.y*.3+.7);
+}
+
+// Ray-AABB (Axis-Aligned Bounding Box) intersection check to skip empty space
+bool RayAABB(vec3 ro, vec3 rd, vec3 boxMin, vec3 boxMax, out float tMin, out float tMax) {
+    vec3 invDir = 1.0 / (rd + vec3(1e-6));
+    vec3 t0 = (boxMin - ro) * invDir;
+    vec3 t1 = (boxMax - ro) * invDir;
+    vec3 tmin = min(t0, t1);
+    vec3 tmax = max(t0, t1);
+    float tNear = max(max(tmin.x, tmin.y), tmin.z);
+    float tFar = min(min(tmax.x, tmax.y), tmax.z);
+    tMin = tNear;
+    tMax = tFar;
+    return tNear < tFar && tFar > 0.0;
+}
+
+void mainImage(out vec4 fragColour, in vec2 fragCoord) {
+    gFragCoord = fragCoord;
+    
+    vec3 camPos, ray;
+    vec2 mousePos = iMouse.xy/iResolution.xy;
+    if (dot(iMouse.xy,vec2(1)) <= 0. || iMouse.z < 0.5) {
+        // Auto camera movement
+        float autoTime = iTime * 0.5;
+        mousePos = vec2(
+            0.5 + 0.15 * sin(autoTime),
+            0.5 + 0.1 * cos(autoTime * 1.3)
+        );
+    }
+    
+    CamPolar(camPos, ray, vec3(1.5,-1.0,0), vec2(-0.2,-0.1)+vec2(0.2,1.0)*mousePos.yx, 12.0, 2.5);
+
+    camPos.y -= 2.0;
+    if (camPos.y < 0.1) camPos.y = -1.2;
+    
+    // Bounding box for flag surface to restrict raymarching
+    float tMin = 0.0;
+    float tMax = 100.0;
+    bool hitBox = RayAABB(camPos, ray, vec3(-0.2, -1.2, -0.6), vec3(3.2, 1.2, 0.6), tMin, tMax);
+    
+    float t = max(0.0, tMin);
+    float h = 1.0;
+    bool hitFlag = false;
+    
+    if (hitBox) {
+        const int maxIterations = 32; // Optimized iteration count (higher to prevent transparency at grazing angles)
+        for (int i=0; i < maxIterations; i++) {
+            if (h < .004 || t > tMax)
+                break;
+            h = DistanceField(camPos+t*ray);
+            t += h * 0.8;
+        }
+        if (h < .004) {
+            hitFlag = true;
+        }
+    }
+    
+    vec3 pos = camPos + t*ray;
+    vec2 uv = UVMapping(pos.xy);
+    
+    vec3 albedo = TurkishFlag(uv);
+    
+    float mask = Mask(uv);
+    bool inFlagBounds = isInFlag(uv);
+    
+    float weave = Weave(uv);
+    float seam = Seam(uv);
+    
+    vec3 normal = Normal(pos);
+    
+    const vec3 lightCol = vec3(1.8,1.6,1.3);
+    
+    float nl = dot(normal,lightDir);
+    float l = max(nl, .0);
+    vec3 scatteredLight = pow(albedo,vec3(2)) * smoothstep(.7, -1., nl);
+    
+    // Height-based ambient occlusion (darkens folds/valleys)
+    float ao = smoothstep(-0.5, 0.5, pos.z) * 0.4 + 0.6;
+    vec3 ambient = Ambient(normal) * .3 * ao;
+    
+    scatteredLight *= mix(.3, .7, weave);
+    ambient *= mix(1.7, .3, weave);
+    l *= mix(1.15, .85, weave);
+    
+    scatteredLight *= mix(.5, 1., seam);
+    
+    vec3 col = albedo;
+    col *= (l + scatteredLight)*lightCol + ambient;
+    
+    // Satin specular sheen (dual specular highlight for premium fabric texture)
+    vec3 H = normalize(lightDir - ray);
+    float dotNH = max(0.0, dot(normal, H));
+    float specSharp = pow(dotNH, 120.0) * 0.4;
+    float specBroad = pow(dotNH, 12.0) * 0.15;
+    col += lightCol * (specSharp + specBroad) * weave;
+    
+    // Subsurface Scattering (backlight glow for translucent fabric)
+    float transmission = max(0.0, dot(ray, lightDir));
+    float sss = pow(transmission, 4.0) * 0.35;
+    col += albedo * sss * lightCol;
+    
+    // Rim lighting
+    float rim = pow(1.0 - max(0.0, dot(normal, -ray)), 3.0);
+    col += rim * lightCol * 0.2;
+    
+    vec3 flagCol = col;
+    
+    // Start with sky background
+    fragColour.rgb = SkyColour(ray);
+    fragColour.a = 1.0;
+
+    // --- Flagpole Rendering ---
+    const float poleThickness = 0.05;
+    vec3 poleOrigin = vec3(-poleThickness, 1.1, 0);
+    vec3 poleRelativePos = poleOrigin - camPos;
+
+    float distanceOfPoleAlongRayXZ = dot(ray.xz, poleRelativePos.xz)/dot(ray.xz,ray.xz);
+
+    vec2 closestPointXZ = ray.xz * distanceOfPoleAlongRayXZ - poleRelativePos.xz;
+    float distToPoleCenterXZ = length(closestPointXZ);
+
+    float poleT = -1.0;
+    bool intersection = false;
+
+    if (distToPoleCenterXZ < poleThickness) {
+        float travelInside = sqrt(poleThickness*poleThickness - distToPoleCenterXZ*distToPoleCenterXZ);
+        poleT = distanceOfPoleAlongRayXZ - travelInside / length(ray.xz);
+
+        vec3 intersectionPoint = camPos + poleT * ray;
+        if (poleT > 0.0 && intersectionPoint.y < poleOrigin.y && intersectionPoint.y > -5.0) {
+            intersection = true;
+        }
+    }
+
+    // Apply atmospheric fog
+    if (!hitFlag || !inFlagBounds) {
+        fragColour.rgb = mix(SkyColour(ray), fragColour.rgb, exp2(-t * vec3(0.012, 0.015, 0.02)));
+    }
+
+    // --- Compositing ---
+    if (hitFlag && inFlagBounds) {
+        fragColour.rgb = flagCol;
+    }
+
+    if (intersection && (poleT < t || !hitFlag || !inFlagBounds)) {
+        vec3 polePos = (camPos + poleT * ray) - poleOrigin;
+        vec3 poleNorm = normalize(vec3(polePos.x, 0.0, polePos.z));
+        vec3 poleCol = vec3(0.6) * (lightCol * max(dot(poleNorm, lightDir), 0.0) + Ambient(poleNorm) * 0.5);
+        poleCol = mix(SkyColour(ray), poleCol, exp2(-poleT * vec3(0.012, 0.015, 0.02)));
+        fragColour.rgb = poleCol;
+    }
+
+    // Apply tone mapping
+    fragColour.rgb = HDRtoLDR(fragColour.rgb);
+    fragColour.a = 1.0;
+}
+
+void main() {
+    mainImage(gl_FragColor, gl_FragCoord.xy);
+}
+                    </pre>
+                </div>
+            </div>
+
+            <div class="project-metadata">
+                <div class="metadata-item">
+                    <h3>Year</h3>
+                    <p>2024 (ongoing)</p>
+                </div>
+                <div class="metadata-item">
+                    <h3>Medium</h3>
+                    <p>WebGL Animation, JavaScript, GLSL</p>
+                </div>
+                <div class="metadata-item">
+                    <h3>Dimensions</h3>
+                    <p>Variable</p>
+                </div>
+            </div>
+
+            <div class="project-navigation">
+                <a href="terra-incognita.html" class="prev-project">
+                    <span class="nav-arrow">←</span>
+                    <span class="nav-title">Terra Incognita</span>
+                </a>
+                <a href="../works.html" class="all-projects" data-translate="allWorks">All Works</a>
+                <a href="perpetual-forgetting.html" class="next-project">
+                    <span class="nav-title">Perpetual Forgetting</span>
+                    <span class="nav-arrow">→</span>
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="../index.html" data-translate="home">Home</a>
+                <a href="../about.html" data-translate="about">About</a>
+                <a href="../works.html" data-translate="work">Work</a>
+                <a href="../blog.html" data-translate="blog">Blog</a>
+                <a href="../contact.html" data-translate="contact">Contact</a>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/yusufz.ozcan" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.behance.net/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/behance.png" alt="Behance">
+                </a>
+                <a href="https://vimeo.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="../assets/icons/vimeo.png" alt="Vimeo">
+                </a>
+            </div>
+            <p data-translate="copyright">Copyright © 2024 Yusuf Özcan. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Exit fullscreen overlay -->
+    <div class="exit-fullscreen-overlay" id="exitFullscreenOverlay">Press ESC to exit fullscreen</div>
+
+    <script src="../assets/js/translations.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+    <!-- WebGL Animation Script -->
+    <script>
+        let canvas;
+        let gl;
+        let program;
+        let positionBuffer;
+        let mouseX = 0;
+        let mouseY = 0;
+        let mouseDown = false;
+        let time = 0;
+        let lastTime = 0;
+        let resolution = [window.innerWidth, window.innerHeight];
+        let noiseTexture;
+        let animationPaused = true; // Start paused
+        let animationFrameId = null;
+        let isFullscreen = false;
+        let autoCameraEnabled = true; // Always use auto camera
+        let autoCameraAngle = 0;
+
+        // Control for pixel ratio based on device
+        const SUPERSAMPLING = Math.min(window.devicePixelRatio || 1.0, 1.5); // Optimized from 2.0 to reduce GPU load on high-DPI screens
+
+        const vertexShaderSource = `
+            attribute vec2 position;
+            void main() {
+                gl_Position = vec4(position, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            // WebGL Fragment Shader for Turkish Flag Animation (Optimized & Detailed)
+            // Created by Yusuf Özcan, 2024-2026
+            #extension GL_OES_standard_derivatives : enable
+            precision highp float;
+            uniform vec2 iResolution;
+            uniform float iTime;
+            uniform vec4 iMouse;
+            uniform sampler2D iChannel0;
+
+            const float tau = 6.28318530717958647692;
+
+            vec2 gFragCoord;
+
+            // Common utility functions
+            vec3 toNormalizedRGB(float r, float g, float b) {
+                return vec3(r/255.0, g/255.0, b/255.0);
+            }
+
+            // Flag colors - Turkish flag - exact official colors
+            const vec3 FLAG_RED = vec3(227.0/255.0, 10.0/255.0, 23.0/255.0);
+            const vec3 FLAG_WHITE = vec3(1.0, 1.0, 1.0);
+
+            // Tone Mapping - optimized for better performance
+            const float exposure = 1.0;
+            const vec3 gradient = vec3(1.4,1.5,1.6);
+            const vec3 whiteSoftness = vec3(.1);
+            const vec3 blackClip = vec3(.0);
+            const vec3 blackSoftness = vec3(.05);
+
+            vec3 LinearToSRGB(vec3 col) {
+                return mix(col*12.92, 1.055*pow(col,vec3(1./2.4))-.055, step(.0031308,col));
+            }
+
+            vec3 HDRtoLDR(vec3 col) {
+                col *= exposure;
+                col = max(col-blackClip,0.);
+                col = sqrt(col*col+blackSoftness*blackSoftness)-blackSoftness;
+                col *= gradient;
+                vec3 w2 = whiteSoftness*whiteSoftness;
+                col += w2;
+                col = (1.-col)*.5;
+                col = 1. - (sqrt(col*col+w2) + col);
+                return LinearToSRGB(col);
+            }
+
+            float linstep(float a, float b, float c) {
+                return clamp((c-a)/(b-a),0.,1.);
+            }
+
+            // Set up a camera looking at the scene.
+            void CamPolar(out vec3 pos, out vec3 ray, in vec3 origin, in vec2 rotation, in float distance, in float zoom) {
+                // get rotation coefficients
+                vec2 c = vec2(cos(rotation.x),cos(rotation.y));
+                vec4 s;
+                s.xy = vec2(sin(rotation.x),sin(rotation.y));
+                s.zw = -s.xy;
+
+                // ray in view space
+                ray.xy = gFragCoord.xy - iResolution.xy*.5;
+                ray.z = iResolution.y*zoom;
+                ray = normalize(ray);
+
+                // rotate ray
+                ray.yz = ray.yz*c.xx + ray.zy*s.zx;
+                ray.xz = ray.xz*c.yy + ray.zx*s.yw;
+
+                // position camera
+                pos = origin - distance*vec3(c.x*s.y,s.z,c.x*c.y);
+            }
+
+            // Pre-computed orthogonal rotation basis matrix for cyclicNoise (reduces CPU/GPU overhead)
+            const mat3 rotMatrix = mat3(
+                vec3(0.4472136, 0.0, 0.8944272),
+                vec3(-0.7807200, 0.4879500, 0.3903600),
+                vec3(-0.4364358, -0.8728716, 0.2182179)
+            );
+
+            // Cyclic Noise algorithm (originally by nimitz) for smooth organic fabric folds
+            float cyclicNoise(vec3 p, float time) {
+                float noise = 0.0;
+                float amp = 1.0;
+                const float gain = 0.55;
+                const float lacunarity = 1.4;
+
+                const float warp = 0.45;    
+                float warpTrk = 1.4;
+                const float warpTrkGain = 1.25;
+
+                for (int i = 0; i < 4; i++) {
+                    // Domain warping
+                    p += sin((p.zxy + vec3(-sin(time)*0.1, time*0.25, time*0.4)) * warpTrk - 2.0 * warpTrk) * warp; 
+
+                    // Sine wave noise calculation
+                    float f = sin(dot(cos(p), sin(p.zyx)));
+                    noise += f * amp;
+
+                    // Rotate and scale
+                    p *= rotMatrix;
+                    p *= lacunarity;
+
+                    warpTrk *= warpTrkGain;
+                    amp *= gain;
+                }
+
+                return (noise * 0.25 + 0.5);
+            }
+
+            // Noise function for clouds - optimized skewing matrix
+            vec4 Noise(in vec2 x) {
+                x = mat2(0.86602540378, -0.5, 0.5, 0.86602540378) * x;
+                vec2 p = floor(x);
+                vec2 f = fract(x);
+                f = f*f*(3.0-2.0*f);
+                vec2 uv = (p + f)/256.0;
+                return texture2D(iChannel0, uv);
+            }
+
+            // Star shape for Turkish flag
+            float sdStar5(in vec2 p, in float r, in float rf) {
+                float angle = 3.141592653589793 / 10.0;
+                float c = cos(angle);
+                float s = sin(angle);
+                p = mat2(c, -s, s, c) * p;
+
+                const vec2 k1 = vec2(0.809016994375, -0.587785252292);
+                const vec2 k2 = vec2(-k1.x, k1.y);
+                p.x = abs(p.x);
+                p -= 2.0*max(dot(k1,p), 0.0)*k1;
+                p -= 2.0*max(dot(k2,p), 0.0)*k2;
+                p.x = abs(p.x);
+                p.y -= r;
+                vec2 ba = rf*vec2(-k1.y, k1.x) - vec2(0,1);
+                float h = clamp(dot(p,ba)/dot(ba,ba), 0.0, r);
+                return length(p-ba*h) * sign(p.y*ba.x-p.x*ba.y);
+            }
+
+            // Water ripple effect - shifts noise horizontally over time to propagate folds from left to right
+            float RippleHeight(vec2 pos) {
+                // Monotonic phase function: prevents waves from slowing to a halt or moving backward.
+                // By keeping the derivative of the phase offset strictly positive, waves always travel forward.
+                float time = iTime * 1.8 + sin(iTime * 0.5) * 0.5 + cos(iTime * 0.23) * 0.4;
+
+                // Moving frame of reference (left to right propagation)
+                float travelX = pos.x - time * 1.2;
+                vec2 wavePos = vec2(travelX * 1.4, pos.y * 1.5);
+
+                // Apply a slight diagonal angle (15 degrees rotation) for natural folds
+                wavePos = mat2(0.966, -0.259, 0.259, 0.966) * wavePos;
+
+                // Slow-evolving time for gentle morphing of waves as they travel
+                float slowTime = time * 0.08;
+                float n = cyclicNoise(vec3(wavePos, slowTime), slowTime);
+                float f = n - 0.5;
+
+                // Damping near the flagpole (x = 0)
+                f = f * (1.0 - exp2(-abs(pos.x) * 1.5));
+                return f * 0.95;
+            }
+
+            // Distance field for flag surface - optimized
+            float DistanceField(vec3 pos) {
+                return (RippleHeight(pos.xy)-pos.z)*.5;
+            }
+
+            // Calculate normal of flag surface using heightfield gradient (only 3 calls to RippleHeight)
+            vec3 Normal(vec3 pos) {
+                vec2 e = vec2(0.02, 0.0);
+                float h = RippleHeight(pos.xy);
+                float hx = RippleHeight(pos.xy + e.xy);
+                float hy = RippleHeight(pos.xy + e.yx);
+                return normalize(vec3(hx - h, hy - h, -e.x));
+            }
+
+            // Map UV coordinates onto distorted flag with improved performance
+            vec2 UVMapping(vec2 target) {
+                // bow the left edge so it's just mounted at 2 points
+                float bow = cos(target.y*6.283185/4.)*.1;
+                target.x -= bow;
+
+                float droop = 0.8;
+                target.y += droop;
+
+                vec2 uv = vec2(0);
+
+                const int n = 4; // Optimized integration steps
+                vec2 d = target/float(n);
+                vec2 l;
+                l.x = RippleHeight(vec2(0,target.y));
+                l.y = RippleHeight(vec2(target.x,0));
+
+                for (int i=0; i < n; i++) {
+                    vec2 s;
+                    s.x = RippleHeight(vec2(d.x*float(i),target.y));
+                    s.y = RippleHeight(vec2(target.x,d.y*float(i)));
+
+                    uv += sign(d)*sqrt(pow(s-l,vec2(2.0))+d*d);
+                    l = s;
+                }
+
+                uv.y -= droop;
+
+                return (uv+vec2(0,1))/vec2(3.0,2.0);
+            }
+
+            // Turkish flag pattern - using exact specifications from reference file
+            vec3 TurkishFlag(vec2 uv) {
+                // Set the flag aspect ratio to 1.5:1 (width:height) as per Turkish standards
+                vec2 flagSize = vec2(1.5, 1.0);
+                vec2 center = vec2(0.5 * flagSize.x, 0.5 * flagSize.y);
+
+                // Background - Official Turkish flag red
+                vec3 rectangleColor = toNormalizedRGB(227.0, 10.0, 23.0);
+                vec3 circleColor = FLAG_WHITE;
+
+                // Create flag with exact dimensions from reference file
+                float firstCircleRadius = flagSize.y * 0.25; // Moon outer radius
+                vec2 firstCirclePos = vec2(center.x - 0.250, center.y);
+
+                float secondCircleRadius = flagSize.y * 0.20; // Moon inner radius
+                vec2 secondCirclePos = vec2(center.x - 0.1875, center.y);
+
+                // Calculate moon crescent with precise values from reference
+                float outerDist = length(uv * flagSize - firstCirclePos) - firstCircleRadius;
+                float innerDist = length(uv * flagSize - secondCirclePos) - secondCircleRadius;
+
+                // Improve anti-aliasing for sharper edges
+                float crescentEdge = smoothstep(-0.001, 0.001, outerDist);
+                float crescentHole = smoothstep(-0.001, 0.001, innerDist);
+
+                // Star positioning based on exact reference coordinates
+                vec2 starCenterPos = vec2(center.x + 0.0708333333333, center.y);
+                float starRadius = flagSize.y * 0.125; // Star size
+                float starInnerRadius = 0.38; // Inner radius ratio
+
+                // Calculate star shape using the reference SDF function
+                float starDist = sdStar5((uv * flagSize) - starCenterPos, starRadius, starInnerRadius);
+                float starEdge = smoothstep(-0.001, 0.001, starDist);
+
+                // Combine elements with correct layering
+                vec3 color = rectangleColor;
+
+                // Apply moon crescent - white where outer circle is visible but inner circle is not
+                if (crescentEdge < 1.0) {
+                    color = mix(color, circleColor, 1.0 - crescentEdge);
+                }
+
+                if (crescentHole < 1.0) {
+                    color = mix(color, rectangleColor, 1.0 - crescentHole);
+                }
+
+                // Apply star - white where star is visible
+                if (starEdge < 1.0) {
+                    color = mix(color, circleColor, 1.0 - starEdge);
+                }
+
+                return color;
+            }
+
+            // Flag boundary mask
+            float Mask(vec2 uv) {
+                float xMask = (uv.x < 0.01 || uv.x > 0.99) ? 1.0 : 0.0;
+                float yMask = (uv.y < 0.01 || uv.y > 0.99) ? 1.0 : 0.0;
+                return max(xMask, yMask);
+            }
+
+            // Checks if a point is within flag bounds
+            bool isInFlag(vec2 uv) {
+                return (uv.x >= -0.001 && uv.x <= 1.001 && uv.y >= -0.001 && uv.y <= 1.001);
+            }
+
+            // Fabric weave texture - optimized for performance
+            float Weave(vec2 uv) {
+                vec2 a = uv*vec2(3.0,2.0)*300.0;
+                float f = (sin(a.x)+sin(a.y))*.25+.5;
+                f = mix(f, .5, min(1., .2*max(fwidth(a.x), fwidth(a.y))));
+                return f;
+            }
+
+            // Seam around flag edge
+            float Seam(vec2 uv) {
+                return smoothstep(.5, .48, abs(uv.y-.5))
+                    * smoothstep(1., .985, uv.x)
+                    * smoothstep(.02, .03, uv.x);
+            }
+
+            // Sky color with improved gradient and horizon
+            vec3 airColourLog2 = vec3(.07,.2,.4);
+            const vec3 lightDir = normalize(vec3(-3,.7,-.6));
+
+            vec3 SkyColour(vec3 ray) {
+                vec3 col = exp2(-ray.y/airColourLog2);
+
+                // Clouds
+                vec2 cloudUV = ray.xz/(ray.y+.1) + iTime*vec2(-.02,0);
+
+                // Cloud noise uses the cheaper 2D Noise
+                float cloudDetail1 = Noise(2.*cloudUV).x;
+                float cloudDetail2 = Noise(4.*cloudUV).x * 0.5;
+                float cloudDetail3 = Noise(8.*cloudUV).x * 0.25;
+                float cloudDetail4 = Noise(16.*cloudUV).x * 0.125;
+
+                float cloudValue = (cloudDetail1 + cloudDetail2 + cloudDetail3 + cloudDetail4) / 1.875;
+                float cloudDensity = smoothstep(0.4, 0.6, cloudValue);
+                col = mix(col, vec3(0.95, 0.95, 1.0), cloudDensity * max(0., ray.y) * 0.8);
+
+                vec3 darkGreenEarthTone = vec3(0.0, 0.01, 0.0);
+
+                float horizonSDF = ray.y - .05 - .04*Noise(ray.xz*12.).x;
+                col = mix(col, darkGreenEarthTone, smoothstep(.002, -.002, horizonSDF));
+
+                vec3 oppLightDir = -lightDir;
+                float dotProduct = dot(normalize(ray.xz), normalize(oppLightDir.xz));
+                float brightnessFactor = smoothstep(-0.5, 1.0, dotProduct) * 0.3;
+                col = mix(col, vec3(0.7, 0.8, 1.0), brightnessFactor * max(0.0, ray.y * 4.0));
+
+                return col;
+            }
+
+            vec3 Ambient(vec3 normal) {
+                return mix(vec3(.1,.07,.05), vec3(.15,.2,.25), normal.y*.3+.7);
+            }
+
+            // Ray-AABB (Axis-Aligned Bounding Box) intersection check to skip empty space
+            bool RayAABB(vec3 ro, vec3 rd, vec3 boxMin, vec3 boxMax, out float tMin, out float tMax) {
+                vec3 invDir = 1.0 / (rd + vec3(1e-6));
+                vec3 t0 = (boxMin - ro) * invDir;
+                vec3 t1 = (boxMax - ro) * invDir;
+                vec3 tmin = min(t0, t1);
+                vec3 tmax = max(t0, t1);
+                float tNear = max(max(tmin.x, tmin.y), tmin.z);
+                float tFar = min(min(tmax.x, tmax.y), tmax.z);
+                tMin = tNear;
+                tMax = tFar;
+                return tNear < tFar && tFar > 0.0;
+            }
+
+            void mainImage(out vec4 fragColour, in vec2 fragCoord) {
+                gFragCoord = fragCoord;
+
+                vec3 camPos, ray;
+                vec2 mousePos = iMouse.xy/iResolution.xy;
+                if (dot(iMouse.xy,vec2(1)) <= 0. || iMouse.z < 0.5) {
+                    // Auto camera movement
+                    float autoTime = iTime * 0.5;
+                    mousePos = vec2(
+                        0.5 + 0.15 * sin(autoTime),
+                        0.5 + 0.1 * cos(autoTime * 1.3)
+                    );
+                }
+
+                CamPolar(camPos, ray, vec3(1.5,-1.0,0), vec2(-0.2,-0.1)+vec2(0.2,1.0)*mousePos.yx, 12.0, 2.5);
+
+                camPos.y -= 2.0;
+                if (camPos.y < 0.1) camPos.y = -1.2;
+
+                // Bounding box for flag surface to restrict raymarching
+                float tMin = 0.0;
+                float tMax = 100.0;
+                bool hitBox = RayAABB(camPos, ray, vec3(-0.2, -1.2, -0.6), vec3(3.2, 1.2, 0.6), tMin, tMax);
+
+                float t = max(0.0, tMin);
+                float h = 1.0;
+                bool hitFlag = false;
+
+                if (hitBox) {
+                    const int maxIterations = 32; // Optimized iteration count (higher to prevent transparency at grazing angles)
+                    for (int i=0; i < maxIterations; i++) {
+                        if (h < .004 || t > tMax)
+                            break;
+                        h = DistanceField(camPos+t*ray);
+                        t += h * 0.8;
+                    }
+                    if (h < .004) {
+                        hitFlag = true;
+                    }
+                }
+
+                vec3 pos = camPos + t*ray;
+                vec2 uv = UVMapping(pos.xy);
+
+                vec3 albedo = TurkishFlag(uv);
+
+                float mask = Mask(uv);
+                bool inFlagBounds = isInFlag(uv);
+
+                float weave = Weave(uv);
+                float seam = Seam(uv);
+
+                vec3 normal = Normal(pos);
+
+                const vec3 lightCol = vec3(1.8,1.6,1.3);
+
+                float nl = dot(normal,lightDir);
+                float l = max(nl, .0);
+                vec3 scatteredLight = pow(albedo,vec3(2)) * smoothstep(.7, -1., nl);
+
+                // Height-based ambient occlusion (darkens folds/valleys)
+                float ao = smoothstep(-0.5, 0.5, pos.z) * 0.4 + 0.6;
+                vec3 ambient = Ambient(normal) * .3 * ao;
+
+                scatteredLight *= mix(.3, .7, weave);
+                ambient *= mix(1.7, .3, weave);
+                l *= mix(1.15, .85, weave);
+
+                scatteredLight *= mix(.5, 1., seam);
+
+                vec3 col = albedo;
+                col *= (l + scatteredLight)*lightCol + ambient;
+
+                // Satin specular sheen (dual specular highlight for premium fabric texture)
+                vec3 H = normalize(lightDir - ray);
+                float dotNH = max(0.0, dot(normal, H));
+                float specSharp = pow(dotNH, 120.0) * 0.4;
+                float specBroad = pow(dotNH, 12.0) * 0.15;
+                col += lightCol * (specSharp + specBroad) * weave;
+
+                // Subsurface Scattering (backlight glow for translucent fabric)
+                float transmission = max(0.0, dot(ray, lightDir));
+                float sss = pow(transmission, 4.0) * 0.35;
+                col += albedo * sss * lightCol;
+
+                // Rim lighting
+                float rim = pow(1.0 - max(0.0, dot(normal, -ray)), 3.0);
+                col += rim * lightCol * 0.2;
+
+                vec3 flagCol = col;
+
+                // Start with sky background
+                fragColour.rgb = SkyColour(ray);
+                fragColour.a = 1.0;
+
+                // --- Flagpole Rendering ---
+                const float poleThickness = 0.05;
+                vec3 poleOrigin = vec3(-poleThickness, 1.1, 0);
+                vec3 poleRelativePos = poleOrigin - camPos;
+
+                float distanceOfPoleAlongRayXZ = dot(ray.xz, poleRelativePos.xz)/dot(ray.xz,ray.xz);
+
+                vec2 closestPointXZ = ray.xz * distanceOfPoleAlongRayXZ - poleRelativePos.xz;
+                float distToPoleCenterXZ = length(closestPointXZ);
+
+                float poleT = -1.0;
+                bool intersection = false;
+
+                if (distToPoleCenterXZ < poleThickness) {
+                    float travelInside = sqrt(poleThickness*poleThickness - distToPoleCenterXZ*distToPoleCenterXZ);
+                    poleT = distanceOfPoleAlongRayXZ - travelInside / length(ray.xz);
+
+                    vec3 intersectionPoint = camPos + poleT * ray;
+                    if (poleT > 0.0 && intersectionPoint.y < poleOrigin.y && intersectionPoint.y > -5.0) {
+                        intersection = true;
+                    }
+                }
+
+                // Apply atmospheric fog
+                if (!hitFlag || !inFlagBounds) {
+                    fragColour.rgb = mix(SkyColour(ray), fragColour.rgb, exp2(-t * vec3(0.012, 0.015, 0.02)));
+                }
+
+                // --- Compositing ---
+                if (hitFlag && inFlagBounds) {
+                    fragColour.rgb = flagCol;
+                }
+
+                if (intersection && (poleT < t || !hitFlag || !inFlagBounds)) {
+                    vec3 polePos = (camPos + poleT * ray) - poleOrigin;
+                    vec3 poleNorm = normalize(vec3(polePos.x, 0.0, polePos.z));
+                    vec3 poleCol = vec3(0.6) * (lightCol * max(dot(poleNorm, lightDir), 0.0) + Ambient(poleNorm) * 0.5);
+                    poleCol = mix(SkyColour(ray), poleCol, exp2(-poleT * vec3(0.012, 0.015, 0.02)));
+                    fragColour.rgb = poleCol;
+                }
+
+                // Apply tone mapping
+                fragColour.rgb = HDRtoLDR(fragColour.rgb);
+                fragColour.a = 1.0;
+            }
+
+            void main() {
+                mainImage(gl_FragColor, gl_FragCoord.xy);
+            }
+        `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+
+        function createProgram(gl, vertexShader, fragmentShader) {
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.error('Program linking error:', gl.getProgramInfoLog(program));
+                return null;
+            }
+
+            return program;
+        }
+
+        function initBuffers(gl) {
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+            // Create a square covering the entire canvas
+            const positions = [
+                -1.0, -1.0,
+                1.0, -1.0,
+                -1.0, 1.0,
+                1.0, 1.0
+            ];
+
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+            return positionBuffer;
+        }
+
+        function createNoiseTexture(gl) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            const size = 512;
+            const data = new Uint8Array(size * size * 4);
+
+            // Generate a 64x64 grid of random values
+            const gridSize = 64;
+            const gridR = new Float32Array(gridSize * gridSize);
+            const gridG = new Float32Array(gridSize * gridSize);
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                gridR[i] = Math.random();
+                gridG[i] = Math.random();
+            }
+
+            // Smoothstep interpolation helper (quintic curve for C2 continuity)
+            function fade(t) {
+                return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+            }
+
+            function lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+
+            // Generate seamless smooth value noise
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const i = (y * size + x) * 4;
+
+                    const gx = (x / size) * gridSize;
+                    const gy = (y / size) * gridSize;
+
+                    const x0 = Math.floor(gx) % gridSize;
+                    const x1 = (x0 + 1) % gridSize;
+                    const y0 = Math.floor(gy) % gridSize;
+                    const y1 = (y0 + 1) % gridSize;
+
+                    const tx = fade(gx - Math.floor(gx));
+                    const ty = fade(gy - Math.floor(gy));
+
+                    // Red channel
+                    const r00 = gridR[y0 * gridSize + x0];
+                    const r10 = gridR[y0 * gridSize + x1];
+                    const r01 = gridR[y1 * gridSize + x0];
+                    const r11 = gridR[y1 * gridSize + x1];
+
+                    const noiseR = lerp(
+                        lerp(r00, r10, tx),
+                        lerp(r01, r11, tx),
+                        ty
+                    );
+
+                    // Green channel
+                    const g00 = gridG[y0 * gridSize + x0];
+                    const g10 = gridG[y0 * gridSize + x1];
+                    const g01 = gridG[y1 * gridSize + x0];
+                    const g11 = gridG[y1 * gridSize + x1];
+
+                    const noiseG = lerp(
+                        lerp(g00, g10, tx),
+                        lerp(g01, g11, tx),
+                        ty
+                    );
+
+                    data[i] = noiseR * 255;
+                    data[i + 1] = noiseG * 255;
+                    data[i + 2] = 0;
+                    data[i + 3] = 255;
+                }
+            }
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+            gl.generateMipmap(gl.TEXTURE_2D);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+            return texture;
+        }
+
+        let isVisible = true;
+
+        function render(currentTime) {
+            if (animationPaused || !isVisible) return;
+
+            // Use requestAnimationFrame timestamp for more accurate timing
+            const now = currentTime || 0;
+            const deltaTime = Math.min(0.033, (now - (lastTime || now)) / 1000); // Cap to 30fps
+            time += deltaTime;
+            lastTime = now;
+
+            // Auto camera movement
+            if (autoCameraEnabled) {
+                autoCameraAngle += deltaTime * 0.05; // Very slow rotation
+                mouseX = canvas.width * (0.5 + 0.15 * Math.sin(autoCameraAngle));
+                mouseY = canvas.height * (0.5 + 0.1 * Math.cos(autoCameraAngle * 1.3));
+            }
+
+            // Clear the canvas
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // Use shader program
+            gl.useProgram(program);
+
+            // Set uniforms
+            const resolutionLocation = gl.getUniformLocation(program, 'iResolution');
+            gl.uniform2fv(resolutionLocation, resolution);
+
+            const timeLocation = gl.getUniformLocation(program, 'iTime');
+            gl.uniform1f(timeLocation, time);
+
+            const mouseLocation = gl.getUniformLocation(program, 'iMouse');
+            gl.uniform4f(mouseLocation, mouseX, mouseY, autoCameraEnabled ? -1 : (mouseDown ? 1 : 0), 0);
+
+            // Set texture
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, noiseTexture);
+            gl.uniform1i(gl.getUniformLocation(program, 'iChannel0'), 0);
+
+            // Set vertex position attribute
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            const positionLocation = gl.getAttribLocation(program, 'position');
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            // Draw
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            // Request next frame
+            animationFrameId = requestAnimationFrame(render);
+        }
+
+        function startAnimation() {
+            if (!animationPaused && !animationFrameId) {
+                animationFrameId = requestAnimationFrame(render);
+            }
+        }
+
+        function pauseAnimation() {
+            animationPaused = true;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function resumeAnimation() {
+            animationPaused = false;
+            startAnimation();
+        }
+
+        function togglePlayPause() {
+            const playPauseBtn = document.getElementById('playPauseBtn');
+
+            if (animationPaused) {
+                resumeAnimation();
+                playPauseBtn.innerHTML = '⏸️';
+                playPauseBtn.title = 'Pause';
+            } else {
+                pauseAnimation();
+                playPauseBtn.innerHTML = '▶️';
+                playPauseBtn.title = 'Play';
+            }
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('webglContainer');
+            const exitOverlay = document.getElementById('exitFullscreenOverlay');
+
+            if (!document.fullscreenElement && !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                // Enter fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+                container.classList.add('fullscreen');
+                exitOverlay.classList.add('visible');
+                isFullscreen = true;
+            } else {
+                // Exit fullscreen
+                exitFullscreen();
+            }
+
+            // Adjust canvas size after fullscreen change
+            setTimeout(updateCanvasSize, 100);
+        }
+
+        function exitFullscreen() {
+            const container = document.getElementById('webglContainer');
+            const exitOverlay = document.getElementById('exitFullscreenOverlay');
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+
+            container.classList.remove('fullscreen');
+            exitOverlay.classList.remove('visible');
+            isFullscreen = false;
+        }
+
+        function updateCanvasSize() {
+            if (!canvas || !gl) return;
+
+            const container = document.getElementById('webglContainer');
+            const canvasContainer = canvas.parentElement;
+            let containerWidth, containerHeight;
+
+            if (isFullscreen) {
+                containerWidth = window.innerWidth;
+                containerHeight = window.innerHeight;
+            } else {
+                containerWidth = canvasContainer.offsetWidth;
+                containerHeight = canvasContainer.offsetHeight;
+            }
+
+            // Update canvas size
+            canvas.width = Math.floor(containerWidth * SUPERSAMPLING);
+
+            if (isFullscreen) {
+                canvas.height = Math.floor(containerHeight * SUPERSAMPLING);
+            } else {
+                canvas.height = Math.floor(containerWidth * 0.5625 * SUPERSAMPLING); // 16:9 aspect ratio
+            }
+
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            resolution = [canvas.width, canvas.height];
+        }
+
+        function initWebGL() {
+            canvas = document.getElementById('glCanvas');
+            const canvasContainer = canvas.parentElement;
+
+            // Get container dimensions for proper sizing
+            const containerWidth = canvasContainer.offsetWidth;
+
+            // Set canvas dimensions to match container with proper aspect ratio
+            canvas.width = Math.floor(containerWidth * SUPERSAMPLING);
+            canvas.height = Math.floor(containerWidth * 0.5625 * SUPERSAMPLING); // 16:9 aspect ratio
+
+            // Initialize GL context with optimized settings
+            gl = canvas.getContext('webgl', {
+                antialias: false,
+                alpha: false,
+                depth: false,
+                stencil: false,
+                preserveDrawingBuffer: false,
+                powerPreference: 'high-performance'
+            });
+
+            if (!gl) {
+                console.error('Unable to initialize WebGL. Your browser may not support it.');
+                return;
+            }
+
+            // Set viewport and resolution
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            resolution = [canvas.width, canvas.height];
+
+            // Enable necessary extensions
+            gl.getExtension('OES_standard_derivatives');
+            gl.getExtension('OES_texture_float');
+            gl.getExtension('OES_texture_float_linear');
+
+            // Create shaders with error checking
+            const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+            const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+            if (!vertexShader || !fragmentShader) {
+                console.error('Shader compilation failed');
+                return;
+            }
+
+            // Create program
+            program = createProgram(gl, vertexShader, fragmentShader);
+
+            if (!program) {
+                console.error('Failed to create shader program');
+                return;
+            }
+
+            // Initialize buffers
+            positionBuffer = initBuffers(gl);
+
+            // Create noise texture
+            noiseTexture = createNoiseTexture(gl);
+
+            // Initialize but don't start animation (starts paused)
+            // Animation will start when user presses play button
+        }
+
+        // Handle canvas interactions
+        function setupCanvasInteractions() {
+            canvas.addEventListener('mousedown', function (e) {
+                mouseDown = true;
+                mouseX = e.offsetX * SUPERSAMPLING;
+                mouseY = e.offsetY * SUPERSAMPLING;
+                autoCameraEnabled = false; // Disable auto camera on user interaction
+            });
+
+            canvas.addEventListener('mouseup', function () {
+                mouseDown = false;
+            });
+
+            canvas.addEventListener('mouseleave', function () {
+                mouseDown = false;
+                // Re-enable auto camera when mouse leaves canvas
+                autoCameraEnabled = true;
+            });
+
+            canvas.addEventListener('mousemove', function (e) {
+                if (mouseDown) {
+                    mouseX = e.offsetX * SUPERSAMPLING;
+                    mouseY = e.offsetY * SUPERSAMPLING;
+                }
+            });
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', function (e) {
+                if (e.touches.length > 0) {
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    mouseDown = true;
+                    mouseX = (e.touches[0].clientX - rect.left) * SUPERSAMPLING;
+                    mouseY = (e.touches[0].clientY - rect.top) * SUPERSAMPLING;
+                    autoCameraEnabled = false; // Disable auto camera on user interaction
+                }
+            });
+
+            canvas.addEventListener('touchend', function (e) {
+                mouseDown = false;
+                // Re-enable auto camera when touch ends
+                autoCameraEnabled = true;
+            });
+
+            canvas.addEventListener('touchmove', function (e) {
+                if (e.touches.length > 0) {
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    mouseX = (e.touches[0].clientX - rect.left) * SUPERSAMPLING;
+                    mouseY = (e.touches[0].clientY - rect.top) * SUPERSAMPLING;
+                }
+            });
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', function () {
+            initWebGL();
+            setupCanvasInteractions();
+
+            // Set up play/pause button
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            playPauseBtn.addEventListener('click', togglePlayPause);
+
+            // Set up fullscreen button
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+            // Handle fullscreen change events
+            document.addEventListener('fullscreenchange', function () {
+                isFullscreen = !!document.fullscreenElement;
+                updateCanvasSize();
+            });
+            document.addEventListener('webkitfullscreenchange', function () {
+                isFullscreen = !!document.webkitFullscreenElement;
+                updateCanvasSize();
+            });
+            document.addEventListener('mozfullscreenchange', function () {
+                isFullscreen = !!document.mozFullScreenElement;
+                updateCanvasSize();
+            });
+            document.addEventListener('MSFullscreenChange', function () {
+                isFullscreen = !!document.msFullscreenElement;
+                updateCanvasSize();
+            });
+
+            // Handle ESC key to exit fullscreen
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && isFullscreen) {
+                    exitFullscreen();
+                }
+            });
+
+            // Handle window resize efficiently with debouncing
+            let resizeTimeout;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(updateCanvasSize, 100);
+            });
+
+            // Set up IntersectionObserver to automatically suspend render loop when off-screen
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    isVisible = entry.isIntersecting;
+                    if (isVisible && !animationPaused && !animationFrameId) {
+                        lastTime = performance.now();
+                        animationFrameId = requestAnimationFrame(render);
+                    }
+                });
+            }, { threshold: 0.05 });
+            observer.observe(document.getElementById('webglContainer'));
+        });
+    </script>
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VisualArtwork",
+        "name": "One and Three Flags",
+        "creator": {
+            "@type": "Person",
+            "name": "Yusuf Özcan",
+            "sameAs": "https://www.instagram.com/yusufz.ozcan"
+        },
+        "dateCreated": "2024",
+        "artform": "WebGL Animation, Digital Art",
+        "description": "An ongoing digital art installation exploring flag symbolism through WebGL animation and interactive media.",
+        "image": "https://yusufozcan.info/assets/detail-pics/project-5-virtual-01.jpg"
+    }
+    </script>
+</body>
+
+</html>

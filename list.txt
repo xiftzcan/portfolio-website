@@ -1,0 +1,16 @@
+Folder PATH listing for volume Personal
+Volume serial number is 34D7-3596
+D:.
++¦¦¦assets
+-   +¦¦¦css
+-   +¦¦¦detail-pics
+-   +¦¦¦home-pics
+-   +¦¦¦icons
+-   +¦¦¦js
+-   L¦¦¦texts
++¦¦¦blog
+-   +¦¦¦essay
+-   +¦¦¦poem
+-   +¦¦¦reflection
+-   L¦¦¦research
+L¦¦¦projects

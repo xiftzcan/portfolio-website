@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Read Yusuf Özcan's thoughts on art, technology, and creative processes. Explore articles, essays, and reflections by the Istanbul-based multimedia artist.">
+    <meta name="keywords" content="Yusuf Özcan, artist blog, art writings, digital art, creative process, contemporary art theory, Turkish art">
+    <meta name="author" content="Yusuf Özcan">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Blog | Yusuf Özcan - Multimedia Artist">
+    <meta property="og:description" content="Read Yusuf Özcan's thoughts on art, technology, and creative processes.">
+    <meta property="og:image" content="https://yusufozcan.info/assets/home-pics/home-profile-pic.jpg">
+    <meta property="og:url" content="https://yusufozcan.info/blog.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | Yusuf Özcan - Multimedia Artist">
+    <meta name="twitter:description" content="Read Yusuf Özcan's thoughts on art, technology, and creative processes.">
+    <meta name="twitter:image" content="https://yusufozcan.info/assets/home-pics/home-profile-pic.jpg">
+    
+    <title>Blog | Yusuf Özcan - Multimedia Artist</title>
+    <link rel="canonical" href="https://yusufozcan.info/blog.html">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/blog.css">
+    <link rel="icon" type="image/svg" href="assets/icons/fav_icon.svg">
+</head>
+<body>
+    <header>
+        <nav id="navbar">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/icons/logo.png" alt="Yusuf Özcan - Multimedia Artist Logo" id="navbarLogo">
+                </a>
+            </div>
+            <button id="hamburger" class="hamburger" aria-label="Toggle navigation">☰</button>
+            <ul class="nav-links">
+                <li><a href="index.html" data-translate="home">Home</a></li>
+                <li><a href="about.html" data-translate="about">About</a></li>
+                <li><a href="works.html" data-translate="work">Work</a></li>
+                <li><a href="blog.html" data-translate="blog">Blog</a></li>
+                <li><a href="contact.html" data-translate="contact">Contact</a></li>
+            </ul>
+            <div class="language-switcher">
+                <button onclick="changeLanguage('en')">EN</button>
+                <button onclick="changeLanguage('tr')">TR</button>
+                <button id="globalThemeToggle" class="theme-toggle-button" aria-label="Toggle theme">
+                    ☀️ </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="blog-section">
+            <h1 data-translate="blogTitle">Blog</h1>
+            
+            <!-- Optional: Category filters -->
+            <div class="blog-filters">
+                <button class="filter-btn active" data-filter="all">All Posts</button>
+                <button class="filter-btn" data-filter="essay">Essays</button>
+                <button class="filter-btn" data-filter="reflection">Reflections</button>
+                <button class="filter-btn" data-filter="research">Research</button>
+                <button class="filter-btn" data-filter="poem">Poems</button>
+            </div>
+            
+            <div class="blog-container">
+                <!-- Blog List -->
+                <div class="blog-list">
+                    <!-- Post: Her Eksik Şiir Gibi -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">June 11, 2026</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/her_eksik_siir_gibi.html">Her Eksik Şiir Gibi</a></h2>
+                        <p class="post-excerpt">Unutulmaya yüz tutmuş hatıradan...</p>
+                        <a href="blog/poem/her_eksik_siir_gibi.html" class="read-more">Read more</a>
+                    </div>
+
+                    <!-- Post: Yegane Şiir -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">June 11, 2026</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/yegane_siir.html">Yegane Şiir</a></h2>
+                        <p class="post-excerpt">İnan ki dedim, İnan ki...</p>
+                        <a href="blog/poem/yegane_siir.html" class="read-more">Read more</a>
+                    </div>
+
+                    <!-- New Post: Formun Şiddeti -->
+                    <div class="blog-post" data-category="essay">
+                        <div class="post-meta">
+                            <span class="post-date" data-translate="formViolence.date">June 11, 2026</span>
+                            <span class="post-category" data-translate="formViolence.category">Essay</span>
+                        </div>
+                        <h2><a href="blog/essay/form-violence.html" data-translate="formViolence.title">The Violence of Form</a></h2>
+                        <p class="post-excerpt" data-translate="formViolence.excerpt">Formal violence, discipline, dissensus, and the Heideggerian rift (Riss) as armor protecting the artwork from dissolving into capitalist communication networks...</p>
+                        <a href="blog/essay/form-violence.html" class="read-more" data-translate="readMore">Read more</a>
+                    </div>
+
+                    <!-- New Post: Subversive Classification Cracks -->
+                    <div class="blog-post" data-category="essay">
+                        <div class="post-meta">
+                            <span class="post-date" data-translate="subversiveClassification.date">June 11, 2026</span>
+                            <span class="post-category" data-translate="subversiveClassification.category">Essay</span>
+                        </div>
+                        <h2><a href="blog/essay/subversive-classification-cracks.html" data-translate="subversiveClassification.title">Classification as a Subversive Methodology and the Exposure of Cracks</a></h2>
+                        <p class="post-excerpt" data-translate="subversiveClassification.excerpt">Transforming archive, classification, and map from tools of domination of modern reason into a subversive methodology that cracks the capitalist inventory and scalability system from within...</p>
+                        <a href="blog/essay/subversive-classification-cracks.html" class="read-more" data-translate="readMore">Read more</a>
+                    </div>
+
+                    <!-- New Post: Ontological Object Gravity -->
+                    <div class="blog-post" data-category="essay">
+                        <div class="post-meta">
+                            <span class="post-date" data-translate="objectGravity.date">June 11, 2026</span>
+                            <span class="post-category" data-translate="objectGravity.category">Essay</span>
+                        </div>
+                        <h2><a href="blog/essay/ontological-object-gravity.html" data-translate="objectGravity.title">The Ontological Transformation of the Object and Specific Gravity</a></h2>
+                        <p class="post-excerpt" data-translate="objectGravity.excerpt">Resisting relational overmining to establish the artwork as an autonomous object, a center of gravity in the symbolic order, and a dialectical moment...</p>
+                        <a href="blog/essay/ontological-object-gravity.html" class="read-more" data-translate="readMore">Read more</a>
+                    </div>
+
+                    <!-- New Post: Relationality Illusion -->
+                    <div class="blog-post" data-category="essay">
+                        <div class="post-meta">
+                            <span class="post-date" data-translate="relationality.date">June 11, 2026</span>
+                            <span class="post-category" data-translate="relationality.category">Essay</span>
+                        </div>
+                        <h2><a href="blog/essay/relationality-illusion.html" data-translate="relationality.title">The Illusion and Dilemma of Relationality: The Rejection of Micro-Utopias</a></h2>
+                        <p class="post-excerpt" data-translate="relationality.excerpt">Exposing the limits of relational aesthetics and the collapse of the myth of progress through the concepts of relational antagonism and dissensus...</p>
+                        <a href="blog/essay/relationality-illusion.html" class="read-more" data-translate="readMore">Read more</a>
+                    </div>
+
+                    <!-- Post: Ufuklar ve Yarınlar -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">May 24, 2025</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/ufuklar_ve_yarinlar.html">Ufuklar ve Yarınlar</a></h2>
+                        <p class="post-excerpt">Boş bir sayfa ağır...</p>
+                        <a href="blog/poem/ufuklar_ve_yarinlar.html" class="read-more">Read more</a>
+                    </div>
+
+
+
+                    <!-- Post: Kapıcı Gözlemi -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">August 04, 2020</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/kapici_gozlemi.html">Kapıcı Gözlemi</a></h2>
+                        <p class="post-excerpt">Alelade bir adam seslendi ardımdan...</p>
+                        <a href="blog/poem/kapici_gozlemi.html" class="read-more">Read more</a>
+                    </div>
+
+                    <!-- Post: Doktor Tavsiyesi -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">July 03, 2020</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/doktor_tavsiyesi.html">Doktor Tavsiyesi</a></h2>
+                        <p class="post-excerpt">Münasibinden bir perde gözlerinize...</p>
+                        <a href="blog/poem/doktor_tavsiyesi.html" class="read-more">Read more</a>
+                    </div>
+
+                    <!-- Post: Yokuş -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">July 03, 2020</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/yokus.html">Yokuş</a></h2>
+                        <p class="post-excerpt">Bu yokuş sonu gelir gibi değil...</p>
+                        <a href="blog/poem/yokus.html" class="read-more">Read more</a>
+                    </div>
+
+                    <!-- Post: Durağan -->
+                    <div class="blog-post" data-category="poem">
+                        <div class="post-meta">
+                            <span class="post-date">July 03, 2020</span>
+                            <span class="post-category">Poems</span>
+                        </div>
+                        <h2><a href="blog/poem/duragan.html">Durağan</a></h2>
+                        <p class="post-excerpt">Her şey durağan elime dokunan...</p>
+                        <a href="blog/poem/duragan.html" class="read-more">Read more</a>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <span class="current-page">1</span>
+                    <a href="blog-page2.html">2</a>
+                    <a href="blog-page3.html">3</a>
+                    <a href="blog-page2.html" class="next-page">Next →</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html" data-translate="home">Home</a>
+                <a href="about.html" data-translate="about">About</a>
+                <a href="works.html" data-translate="work">Work</a>
+                <a href="blog.html" data-translate="blog">Blog</a>
+                <a href="contact.html" data-translate="contact">Contact</a>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/yusufz.ozcan" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/icons/instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.behance.net/" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/icons/behance.png" alt="Behance">
+                </a>
+                <a href="https://vimeo.com/" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/icons/vimeo.png" alt="Vimeo">
+                </a>
+            </div>
+            <p data-translate="copyright">Copyright © 2024 Yusuf Özcan. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/translations.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/blog-pagination.js"></script>
+    <script>
+        // Blog filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const blogPosts = document.querySelectorAll('.blog-post');
+            const featuredPost = document.querySelector('.featured-post');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Handle featured post
+                    if (filter === 'all') {
+                        featuredPost.style.display = 'flex';
+                    } else {
+                        if (featuredPost.getAttribute('data-category').includes(filter)) {
+                            featuredPost.style.display = 'flex';
+                        } else {
+                            featuredPost.style.display = 'none';
+                        }
+                    }
+                    
+                    // Handle regular posts
+                    blogPosts.forEach(post => {
+                        if (filter === 'all') {
+                            post.style.display = 'block';
+                        } else {
+                            if (post.getAttribute('data-category').includes(filter)) {
+                                post.style.display = 'block';
+                            } else {
+                                post.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
